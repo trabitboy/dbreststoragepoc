@@ -64,8 +64,8 @@ public class MinorVersion {
 		return id;
 	}
 
-	public void setId(long idCard) {
-		this.id = idCard;
+	public void setId(long idmiv) {
+		this.id = idmiv;
 	}
 
 	

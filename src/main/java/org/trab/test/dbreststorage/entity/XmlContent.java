@@ -25,7 +25,7 @@ public class XmlContent {
 	        initialValue=1,
 	        allocationSize=1
 	    )
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="CFC_XML_CONTENT_SEQUENCE_GENERATOR")
+	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="XML_CONTENT_SEQUENCE_GENERATOR")
 	@Id 
 	@Column(name = "ID")
 	long id;
