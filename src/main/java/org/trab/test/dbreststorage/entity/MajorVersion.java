@@ -35,6 +35,8 @@ public class MajorVersion {
 	@Column(name = "ID")
 	long id;
 
+	
+
 	@Column(name = "NAME")
 	String name;
 
@@ -59,20 +61,17 @@ public class MajorVersion {
 	private Document document;
 
 	public MajorVersion() {
-
+		this.latestVersion=false;
+		this.oldestVersion=false;
 	}
 
-	public MajorVersion(String name, Document deck) {
-		this.name = name;
-		this.document = deck;
-	}
 
 	public long getId() {
 		return id;
 	}
 
-	public void setId(long idCard) {
-		this.id = idCard;
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	
@@ -108,9 +107,31 @@ public class MajorVersion {
 	//@Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE})
 	private List<XmlContent> xmls = new ArrayList<XmlContent>();
 
+	@Column(name = "MNLATEST")
+	Boolean latestVersion;
+
+	@Column(name = "MNOLDEST")
+	Boolean oldestVersion;
+
 	
 	
 	
+	public Boolean getLatestVersion() {
+		return latestVersion;
+	}
+
+	public void setLatestVersion(Boolean latestVersion) {
+		this.latestVersion = latestVersion;
+	}
+
+	public Boolean getOldestVersion() {
+		return oldestVersion;
+	}
+
+	public void setOldestVersion(Boolean oldestVersion) {
+		this.oldestVersion = oldestVersion;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -123,8 +144,8 @@ public class MajorVersion {
 		return document;
 	}
 
-	public void setDocument(Document deck) {
-		this.document = deck;
+	public void setDocument(Document doc) {
+		this.document = doc;
 	}
 
 	public int getMajorVersionNumber() {

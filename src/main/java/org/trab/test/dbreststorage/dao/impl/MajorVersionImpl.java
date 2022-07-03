@@ -13,7 +13,6 @@ import org.trab.test.dbreststorage.entity.XmlContent;
 import org.trab.test.dbreststorage.util.AbstractHibernateDao;
 
 @Repository("majorVersionDao")
-@Transactional
 public class MajorVersionImpl extends AbstractHibernateDao implements MajorVersionDao {
 
 	public Long save(MajorVersion mv) {

@@ -23,7 +23,7 @@ public class XmlContent {
 	        name="CFC_XML_CONTENT_SEQUENCE_GENERATOR",
 	        sequenceName="CFC_XML_CONTENT_SEQ",
 	        initialValue=1,
-	        allocationSize=1
+	        allocationSize=50//check if automated schema creation is compatible
 	    )
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="XML_CONTENT_SEQUENCE_GENERATOR")
 	@Id 
@@ -73,19 +73,12 @@ public class XmlContent {
 		return id;
 	}
 
-	public void setId(long idCard) {
-		this.id = idCard;
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	
 
-//	public Document getDocument() {
-//		return document;
-//	}
-//
-//	public void setDocument(Document deck) {
-//		this.document = deck;
-//	}
 
 	@Override
 	public String toString() {

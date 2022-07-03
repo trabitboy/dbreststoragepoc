@@ -7,7 +7,7 @@ import org.trab.test.dbreststorage.entity.MajorVersion;
 
 public interface MajorVersionDao {
 
-	Long save(MajorVersion card);
+	Long save(MajorVersion mav);
 	
 	Long saveMajorVersionWithXml(String name,String xml);
 

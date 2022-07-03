@@ -79,8 +79,8 @@ public class DocPackage implements Serializable{
 		return documents;
 	}
 
-	public void setDocuments(List<Document> decks) {
-		this.documents = decks;
+	public void setDocuments(List<Document> docs) {
+		this.documents = docs;
 	}
 	
 	

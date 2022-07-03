@@ -13,16 +13,14 @@ import org.trab.test.dbreststorage.dao.DocumentDao;
 import org.trab.test.dbreststorage.entity.Document;
 import org.trab.test.dbreststorage.util.AbstractHibernateDao;
 
-@Repository("deckDao")
+@Repository("documentDao")
 @Transactional
 public class DocumentDaoImpl extends AbstractHibernateDao implements DocumentDao{
 
 	private static final Logger LOG = LoggerFactory.getLogger(DocumentDaoImpl.class) ;
 	 
-	public void save(final Document deck) {
-		LOG.debug("-- Begin Save deck");
-		this.getCurrentSession().saveOrUpdate(deck);
-		LOG.debug("-- End Save deck");
+	public void save(final Document doc) {
+		this.getCurrentSession().saveOrUpdate(doc);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -34,8 +32,8 @@ public class DocumentDaoImpl extends AbstractHibernateDao implements DocumentDao
 		return toReturn;
 	}
 
-	public Document findById(long idDeck) {
-		return (Document) this.getCurrentSession().get(Document.class, idDeck);
+	public Document findById(long id) {
+		return (Document) this.getCurrentSession().get(Document.class, id);
 		
 	}
 	

@@ -2,6 +2,8 @@ package org.trab.test.dbreststorage.service.impl;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.trab.test.dbreststorage.dao.DocPackageDao;
 import org.trab.test.dbreststorage.dao.DocumentDao;
 import org.trab.test.dbreststorage.dao.MajorVersionDao;
+import org.trab.test.dbreststorage.dao.MinorVersionDao;
 import org.trab.test.dbreststorage.entity.DocPackage;
 import org.trab.test.dbreststorage.entity.Document;
 import org.trab.test.dbreststorage.entity.MajorVersion;
@@ -19,8 +22,16 @@ import org.trab.test.dbreststorage.service.DocService;
 
 //just here for transactionality
 
+
+
 @Service
 public class DocServiceImpl implements DocService {
+	
+	
+	
+	
+	@Autowired
+	EntityManager entityManager;
 	
 	@Autowired
 	DocumentDao dDocumentDao;
@@ -31,6 +42,11 @@ public class DocServiceImpl implements DocService {
 	@Autowired
 	MajorVersionDao majorVersionDao;
 
+	@Autowired
+	MinorVersionDao minorVersionDao;
+	
+	
+	
 	@Transactional
 	public List<MajorVersion> allMajorVersionWithXmls(long mvId) {
 		return majorVersionDao.listWithXmls();
@@ -44,25 +60,36 @@ public class DocServiceImpl implements DocService {
 
 	//atomic
 	@Transactional(propagation =  Propagation.REQUIRES_NEW)
-	public Long createPackage(String xml) {
+	public TestPkg createPackage(String xml,long minVerNum,String cuid) {
 
 		XmlContent xc=new XmlContent();
 		xc.setXml(xml);
 //		
-		MinorVersion miv =new MinorVersion();
-		miv.getXmls().add(xc);
-		xc.setMinorVersion(miv);
 //
 		MajorVersion mav =new MajorVersion();
 		mav.getXmls().add(xc);
 		xc.setMajorVersion(mav);
-		mav.getMinorVersions().add(miv);
-		miv.setMajorVersion(mav);
 		mav.setName("test");
 
+		for (int i=1;i<=minVerNum;i++) {
+			XmlContent xcmiv=new XmlContent();
+			xcmiv.setXml(xml);
+			MinorVersion miv =new MinorVersion();
+			miv.getXmls().add(xcmiv);
+			xcmiv.setMinorVersion(miv);
+			mav.getMinorVersions().add(miv);
+			miv.setMajorVersion(mav);
+			if (i==minVerNum)
+			{
+				miv.setLatestVersion(true);
+			}
+		}
+		
+		
 		
 		Document doc=new Document();
 		doc.setName("test");
+		doc.setCuid(cuid);
 		doc.getMajorVersions().add(mav);
 		mav.setDocument(doc);
 		
@@ -71,8 +98,10 @@ public class DocServiceImpl implements DocService {
 		pkg.getDocuments().add(doc);
 		doc.setDocPackage(pkg);
 		
-		return docPackageDao.save(pkg);
-
+		 Long created = docPackageDao.save(pkg);
+		 entityManager.flush(); //sql executed, ids generated
+		 
+		 return new TestPkg(created, mav.getId(), mav.getMinorVersions().get((int) (minVerNum-1)).getId());
 	}
 	
 	//MEGATON EXPENSIVE
@@ -96,11 +125,64 @@ public class DocServiceImpl implements DocService {
 		
 		return dp;
 	}
-	
-	
-	//TODO
-	public static void logPackage(DocPackage dp) {
-		
-	
+
+	@Transactional
+	public MinorVersion getMinorVersionWithMajor(long mivId) {
+		MinorVersion prevLatest = minorVersionDao.find(mivId);
+		Hibernate.initialize(prevLatest.getMajorVersion());
+		return prevLatest;
 	}
+	
+	@Transactional
+	public Long saveMinorVersionFromMavId(long mavId, String xml) {
+//		miVD
+		MinorVersion prevLatest = minorVersionDao.getLatestMinorVersionFromMavId(mavId);
+		prevLatest.setLatestVersion(false);
+		
+		MinorVersion nlv = new MinorVersion();
+		
+		nlv.setLatestVersion(true);
+		//TODO save xml
+		minorVersionDao.save(nlv);
+		entityManager.flush();
+		//now for the link
+		//known solution from hibernate in action
+		entityManager.createNativeQuery("update minor_version set major_version_id="+mavId+" WHERE id="+nlv.getId()).executeUpdate();
+		
+
+		
+		return nlv.getId();
+	}
+
+	@Transactional
+	public Long saveMinorVersionFromCuid(String cuid, String xml) {
+		MinorVersion prevLatest = minorVersionDao.getLatestMinorVersionFromCuid(cuid);
+		prevLatest.setLatestVersion(false);
+		
+		MinorVersion nlv = new MinorVersion();
+		
+		nlv.setLatestVersion(true);
+		XmlContent xc = new XmlContent();
+		xc.setXml(xml);
+		nlv.getXmls().add(xc);
+		minorVersionDao.save(nlv);
+		
+		entityManager.flush();
+		//now for the link 
+		//known solution from hibernate in action
+		
+		//TODO check overhead of get id ( do we get all maj version// colls?
+		long mavid = prevLatest.getMajorVersion().getId();
+		entityManager.createNativeQuery("update minor_version set major_version_id="+mavid+" WHERE id="+nlv.getId()).executeUpdate();
+		
+		//TODO add manual optimistic locking here
+		// do a select to see if another latest has been created, if yes, throw a runtime busness exception > it will rollback transaction
+		// for concurrency>many users on one doc
+		
+		return nlv.getId();
+	}
+	
+	
+
+	
 }

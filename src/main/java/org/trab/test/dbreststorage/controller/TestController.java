@@ -3,6 +3,7 @@ package org.trab.test.dbreststorage.controller;
 import javax.persistence.EntityManager;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -52,12 +53,15 @@ public class TestController {
 		return new ResponseEntity<>("test"+id, HttpStatus.OK);
 	}
 	
+	@Value("${trab.test}")
+	String testProp;
 	
 	@GetMapping(value = {"/ping/{id}"}, produces = "application/json")
 	public ResponseEntity<String> ping(
 	@PathVariable String id
 	) {
-		return new ResponseEntity<>("test"+id, HttpStatus.OK);
+		
+		return new ResponseEntity<>("test"+id+" test prop "+testProp, HttpStatus.OK);
 	}
 		
 	

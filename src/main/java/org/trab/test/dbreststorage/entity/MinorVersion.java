@@ -35,15 +35,38 @@ public class MinorVersion {
 	@Column(name = "ID")
 	long id;
 
+	public Boolean getLatestVersion() {
+		return latestVersion;
+	}
+
+	public void setLatestVersion(Boolean latestVersion) {
+		this.latestVersion = latestVersion;
+	}
+
+	public Boolean getOldestVersion() {
+		return oldestVersion;
+	}
+
+	public void setOldestVersion(Boolean oldestVersion) {
+		this.oldestVersion = oldestVersion;
+	}
+
+
 	@Column(name = "NAME")
 	String name;
 
 	@Column(name = "MNNUMBER")
 	int minorVersionNumber;
 	
+	@Column(name = "MNLATEST")
+	Boolean latestVersion;
 
+	@Column(name = "MNOLDEST")
+	Boolean oldestVersion;
+	
 	public MinorVersion() {
-
+		this.latestVersion=false;
+		this.oldestVersion=false;
 	}
 
 	
@@ -99,6 +122,15 @@ public class MinorVersion {
 		this.minorVersionNumber = mvn;
 	}
 
+	//WIP POSSIBLE OPTIMIZATION,TO TEST (store FK of latest miv as a field in parent entity for easy querying)
+	@ManyToOne
+	@JoinColumn(name = "LTST_FOR_MAJOR_VERSION_ID")
+	MajorVersion latestForMajorVersion;
+	
+
+	
+	
+	
 	@Override
 	public String toString() {
 		StringBuilder sBuilder = new StringBuilder();
@@ -118,5 +150,13 @@ public class MinorVersion {
 
 	public void setXmls(List<XmlContent> xmls) {
 		this.xmls = xmls;
+	}
+
+	public MajorVersion getLatestForMajorVersion() {
+		return latestForMajorVersion;
+	}
+
+	public void setLatestForMajorVersion(MajorVersion latestForMajorVersion) {
+		this.latestForMajorVersion = latestForMajorVersion;
 	}
 }

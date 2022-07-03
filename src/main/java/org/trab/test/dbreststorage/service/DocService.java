@@ -5,23 +5,35 @@ import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 import org.trab.test.dbreststorage.entity.DocPackage;
 import org.trab.test.dbreststorage.entity.MajorVersion;
+import org.trab.test.dbreststorage.entity.MinorVersion;
+import org.trab.test.dbreststorage.service.impl.TestPkg;
 
 //main poc service
 public interface DocService {
 
-	
-	/*
-	 * creates test package with a document with a minor version with xml provided
-	 */
-	public Long createPackage(String xml);
+	public Long saveMinorVersionFromMavId(long mavId,String xml);
+	public Long saveMinorVersionFromCuid(String cuid,String xml);
 	
 	
 	public List<MajorVersion> allMajorVersionWithXmls(long mvId);
 
 	public long saveMajorVersionWithXml(String name,String xml);
-	//MEGATON EXPENSIVE
+	
+	public MinorVersion getMinorVersionWithMajor(long mivId);
+
+	
+	
+	//MEGATON EXPENSIVE METHODS, FOR TEST SETUP
+	
+	
 	DocPackage testGetAllPackageInitialized(Long id) ;
 
-//	MajorVersion getMajorVersion(long mvId);
+	/*
+	 * creates test package with a document with a N version with xml provided
+	 */
+	public TestPkg createPackage(String xml,long minVerNum, String cuid);
+	
+	
+	
 	
 }

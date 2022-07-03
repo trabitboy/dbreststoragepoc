@@ -38,7 +38,7 @@ public class MajorVersionController {
 	
 
 	@PostMapping(value = {"/majorversion/createFromName"}, produces = "application/json")
-	public ResponseEntity<String> exportNotification(
+	public ResponseEntity<String> createMajorVersion(
 			@RequestBody String json
 	) {
 //		System.out.println(json

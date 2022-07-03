@@ -41,33 +41,35 @@ public class Document {
 	@Column(name = "NAME")
 	private String name;
 
+
+	
+	
 	/**
 	 * owning side of the relationship with player
 	 */
 	@ManyToOne(optional=true)
 	@JoinColumn(name = "PACKAGE_ID", nullable = true, unique = false, updatable = true)
 	private DocPackage docPackage;
+
+	
+	@Column(name = "CUID")
+	String cuid;
 	
 	
+	public String getCuid() {
+		return cuid;
+	}
+
+	public void setCuid(String cuid) {
+		this.cuid = cuid;
+	}
+
 	
-	/*
-	 * Uncomment the annotation for BI-Directional relationship !
-	 * 
-	 * 'mappedBy' – means “I am NOT on the OWNING side”, I am mapped by Card from
-	 * the other side of the relationship. It will also not create the database
-	 * column which makes sense, I would expect a foreign key on the CARD
-	 * table instead.
-	 */
-	/* */
 	@OneToMany(
 			cascade = CascadeType.ALL
 			, mappedBy = "document"
 			, fetch = FetchType.LAZY
 			)
-	/* */
-	
-	// I let spring handle the entity manager so I can stay with my jpa annotations and not mix with pure Hibernate annotations
-	//@Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE})
 	private List<MajorVersion> majorVersions = new ArrayList<MajorVersion>();
 
 
