@@ -12,7 +12,7 @@ import org.trab.test.dbreststorage.service.impl.TestPkg;
 public interface DocService {
 
 	public Long saveMinorVersionFromMavId(long mavId,String xml);
-	public Long saveMinorVersionFromCuid(String cuid,String xml);
+	public Long saveMinorVersionFromCuid(String cuid,String xml,boolean testExtraWait);
 	
 	
 	public List<MajorVersion> allMajorVersionWithXmls(long mvId);

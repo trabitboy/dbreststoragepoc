@@ -1,8 +1,10 @@
 package org.trab.test.dbreststorage.service.impl;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -155,9 +157,14 @@ public class DocServiceImpl implements DocService {
 	}
 
 	@Transactional
-	public Long saveMinorVersionFromCuid(String cuid, String xml) {
+	public Long saveMinorVersionFromCuid(String cuid, String xml,boolean testExtraWait) {
 		MinorVersion prevLatest = minorVersionDao.getLatestMinorVersionFromCuid(cuid);
-		prevLatest.setLatestVersion(false);
+		entityManager.lock(prevLatest, LockModeType.OPTIMISTIC);
+		//with the above line, hibernate executes an extra:
+		//org.hibernate.SQL                        : select version as version_ from minor_version where id =?
+		//to check if object was touched in the meantime
+		
+		prevLatest.setLatestVersion(false); //when this item is updated on flush/transaction end, it will trigger optimistic lock check 
 		
 		MinorVersion nlv = new MinorVersion();
 		
@@ -176,13 +183,26 @@ public class DocServiceImpl implements DocService {
 		entityManager.createNativeQuery("update minor_version set major_version_id="+mavid+" WHERE id="+nlv.getId()).executeUpdate();
 		
 		//TODO add manual optimistic locking here
+		// this select probably needs to be in another transaction?
 		// do a select to see if another latest has been created, if yes, throw a runtime busness exception > it will rollback transaction
 		// for concurrency>many users on one doc
+		
+		//wait 10 seconds for concurrency test
+		if (testExtraWait) {
+			try {
+				System.out.println("wait begin");
+				TimeUnit.SECONDS.sleep(10);
+				System.out.println("wait over");
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 		
 		return nlv.getId();
 	}
 	
-	
+	//TODO alternate method with manual optimistic lock implementation ^^ (for fun and profit) with sub method
+	// that polls outside transaction context using propagation 'requires new'
 
 	
 }

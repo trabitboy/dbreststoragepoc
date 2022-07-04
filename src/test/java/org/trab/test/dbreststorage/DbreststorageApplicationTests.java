@@ -87,6 +87,7 @@ class DbreststorageApplicationTests {
 	void testSaveLatestMinorVersionFromMavId() {
 		
 		TestPkg tp = docService.createPackage("<xml></xml>", 1, null);
+//		System.out.println();
 		Long mivId=docService.saveMinorVersionFromMavId(tp.mavId,"latest");
 		MinorVersion toTest = docService.getMinorVersionWithMajor(mivId);
 		System.out.println(toTest.getMajorVersion().getId());

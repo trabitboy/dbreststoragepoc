@@ -2,8 +2,11 @@ package org.trab.test.dbreststorage.dao.impl;
 
 import java.util.List;
 
+import javax.persistence.LockModeType;
+
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
+import org.hibernate.LockMode;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;

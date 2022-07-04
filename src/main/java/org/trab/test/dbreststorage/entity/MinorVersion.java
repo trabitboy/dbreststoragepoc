@@ -17,6 +17,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 
 
@@ -34,6 +35,19 @@ public class MinorVersion {
 	@Id 
 	@Column(name = "ID")
 	long id;
+
+	@Version 
+	long version;
+	
+	
+	
+	public long getVersion() {
+		return version;
+	}
+
+	public void setVersion(long version) {
+		this.version = version;
+	}
 
 	public Boolean getLatestVersion() {
 		return latestVersion;

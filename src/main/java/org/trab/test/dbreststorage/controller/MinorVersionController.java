@@ -1,5 +1,6 @@
 package org.trab.test.dbreststorage.controller;
 
+import org.hibernate.StaleStateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -39,13 +40,18 @@ public class MinorVersionController {
 			JsonNode actualObj = mapper.readTree(json);
 			String cuid= actualObj.get("cuid").asText();
 			String xml=new String(file.getBytes());
+			boolean wait = actualObj.get("wait").asBoolean();
 //			System.out.println(xml);
-			long id=docService.saveMinorVersionFromCuid(cuid, xml);
+			long id=docService.saveMinorVersionFromCuid(cuid, xml,wait);
 			String ret=Long.toString(id);
 			return new ResponseEntity<>(ret, HttpStatus.OK);
+		} catch (StaleStateException e) {
+			e.printStackTrace();
+			return new ResponseEntity<>("concurrency error", HttpStatus.INTERNAL_SERVER_ERROR);
+		
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<>("post NOT ok", HttpStatus.OK);
+			return new ResponseEntity<>("post NOT ok", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 	}
@@ -68,7 +74,7 @@ public class MinorVersionController {
 			return new ResponseEntity<>(ret, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<>("post NOT ok", HttpStatus.OK);
+			return new ResponseEntity<>("post NOT ok", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
 		//TODO make service to save miv from mav id and xml

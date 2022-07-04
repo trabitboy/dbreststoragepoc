@@ -32,29 +32,32 @@ DONE
 -- save one miv on 12000 versions documents around 130 ms
 -- load test with 50 users 
 -- 50 user concurrent on same doc> system holds up but optimistic locking to implement (latest version flag wrongly set)
+-- use @version for optimistic locking, on document, or similar approach by selecting before transaction end and throwing runtime business exception
+-- optimistic locking using minor version (update of the latest version flag on previous latest version)
+-- test by putting 10 sec wait sate in method and doing and update of version number in sql client
+>optimistic locking implemented, very rapid operations on same document now error on h2
 
 WIP
-- jmeter retrieve and save scenario
-	- get latest (by flag(done) and by higher number(todo for comparison)  ) min version from current parent (major version)
-	- save min version
 -- how to optimize result of query when searching latest version
 -- flag?
 -- highest number?
 simply keep a foreign key to the latest minor version
+
 -- how to make sure that query will not suffer on several documents with 12000 versions
--- (query on 120000 min versions join mav join doc ?) 
--- create a lot of documents (see variables in jmeter)
--- > exploded dev database after 5, need to request bigger
+       seems to work ok on oracle
+-- > exploded dev database after 5 12000 version packages (12 go), need to request bigger
   
+
+
 TODO 
 
 
--- use @version for optimistic locking, on document, or similar approach by selecting before transaction end and throwing runtime business exception
+
 
 -- more operations to load the save > leos does a couple extra fetches
 
 - test with jdbc template, including transaction
-
+-- put number on seq definitions (50) so no individual selects
 --alternative to jdbc template
 --hibernate dto projection
 --https://vladmihalcea.com/the-best-way-to-map-a-projection-query-to-a-dto-with-jpa-and-hibernate/
@@ -64,36 +67,16 @@ spring.datasource.hikari.minimumIdle=10
 spring.datasource.hikari.maximumPoolSize=100
 spring.datasource.hikari.maxLifetime=2400000
 
---recommended vm heap 2go
--- 
-
 -- remove instantiation of objectmapper on each request as it is singleton
 - test application context aware to log all available beans from context
-- try to  increase load on h2 
 
 - configure tomcat thread pool
 
-QUESTIONS FOR COLLEAGUES
-ask devs : correct version of ojdbc for our oracle
-
-
 --does more recent java increase performance ?
 
-arch>why not multipart? (for superthis heavy)
-https://www.baeldung.com/sprint-boot-multipart-requests
 how to parameterize datasource when running as a jar - externalize dbprops
 how to maximize availability (config of tomcat threadpool, 
-	for tuning of hibernate singleton persistence layer vs tons of requests
-	numbr of beans prototype vs singleton ; does spring prototype = false help)
-mission control>do I use it -- follow up cpu and memory
-how to have automatic json translation in controller
 
-what to use for fastest jdbc approach ? spring data instead of template?
-what advantage for spring data ?
-how to configure/check default jdbc connection pool/parameterize it
-which oracle driver, is there a native one to bundle?
-how to run jdbc template and hibernate in the same spring boot project
-- hibernate for schema definition and prototyping,
-- some jdbc template for speed
 
-24H30 h work so far
+
+26H00 h work so far
