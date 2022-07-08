@@ -30,7 +30,7 @@ public abstract class AbstractHibernateDao {
 //	}
 
 	@Autowired
-	EntityManager entityManager;
+	public EntityManager entityManager;
 	
 	public  Session getCurrentSession() {
 //		Session toReturn ;

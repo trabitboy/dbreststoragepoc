@@ -3,6 +3,10 @@ package org.trab.test.dbreststorage.dao.impl;
 import java.util.List;
 
 import javax.persistence.LockModeType;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import javax.persistence.criteria.SetJoin;
 
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
@@ -11,6 +15,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.trab.test.dbreststorage.dao.MinorVersionDao;
+import org.trab.test.dbreststorage.entity.MajorVersion;
 import org.trab.test.dbreststorage.entity.MinorVersion;
 import org.trab.test.dbreststorage.entity.XmlContent;
 import org.trab.test.dbreststorage.util.AbstractHibernateDao;
@@ -86,6 +91,22 @@ public class MinorVersionDaoImpl extends AbstractHibernateDao implements MinorVe
 	}
 
 
+	
+	//TODO not finished, JPA rewrite to get rid of warning
+	public MinorVersion getLatestMinorVersionFromCuidJPA(String cuid) {
+		CriteriaBuilder cb=entityManager.getCriteriaBuilder();
+		CriteriaQuery<MinorVersion> myCrit=cb.createQuery(MinorVersion.class);
+
+		Root<MinorVersion> root = myCrit.from(MinorVersion.class);
+//		SetJoin<MinorVersion, MajorVersion> miv = root.join(Author_.books);
+//		 
+//		ParameterExpression<String> paramTitle = cb.parameter(String.class);
+//		cq.where(cb.like(books.get(Book_.title), paramTitle));		
+//		
+//		
+		List<MinorVersion> toReturn = entityManager.createQuery(myCrit).getResultList();
+		return toReturn.get(0);
+	}	
 
 	@Override
 	public MinorVersion getLatestMinorVersionFromCuid(String cuid) {

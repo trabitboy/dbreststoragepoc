@@ -31,28 +31,27 @@ DONE
 -- creating 12000 versions documents with test method > couple of seconds
 -- save one miv on 12000 versions documents around 130 ms
 -- load test with 50 users 
--- 50 user concurrent on same doc> system holds up but optimistic locking to implement (latest version flag wrongly set)
+-- 50 user concurrent on same doc> system holds up  optimistic locking implemented (latest version flag wrongly set)
 -- use @version for optimistic locking, on document, or similar approach by selecting before transaction end and throwing runtime business exception
 -- optimistic locking using minor version (update of the latest version flag on previous latest version)
 -- test by putting 10 sec wait sate in method and doing and update of version number in sql client
 >optimistic locking implemented, very rapid operations on same document now error on h2
 
 WIP
+
+-- flatten model> merge minor version and major version
+
 -- how to optimize result of query when searching latest version
 -- flag?
 -- highest number?
 simply keep a foreign key to the latest minor version
 
--- how to make sure that query will not suffer on several documents with 12000 versions
-       seems to work ok on oracle
--- > exploded dev database after 5 12000 version packages (12 go), need to request bigger
-  
 
+-- testing on many packages (waiting bigger database)  
+
+-- edit xml / use code generation for json payload to do a 200 packages 1000 users test scenario
 
 TODO 
-
-
-
 
 -- more operations to load the save > leos does a couple extra fetches
 
@@ -79,4 +78,4 @@ how to maximize availability (config of tomcat threadpool,
 
 
 
-26H00 h work so far
+33H00 h work so far (1/3 dev 2/3 jmeter)

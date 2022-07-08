@@ -40,7 +40,7 @@ public class PackageController {
 			@RequestParam("file") MultipartFile file) 
 	{
 		try {
-			System.out.println(json);
+//			System.out.println(json);
 			JsonNode actualObj = mapper.readTree(json);
 			String xml=new String(file.getBytes());
 			Long numVersions=actualObj.get("numVersions").asLong();
@@ -52,11 +52,11 @@ public class PackageController {
 		    ObjectNode jpkg = mapper.createObjectNode();
 		    Long myPkgId=tp.pkgId;
 		    System.out.println(myPkgId);
-		    jpkg.put("pkgid",myPkgId) ;
+//		    jpkg.put("pkgid",myPkgId) ;
 		    long mavId = tp.mavId;
 		    jpkg.put("mavid", mavId);
 		    long lastMivId=tp.latestMivId;
-		    System.out.println("last miv id "+lastMivId);
+//		    System.out.println("last miv id "+lastMivId);
 			jpkg.put("lastmivid", lastMivId);
 			
 
@@ -89,12 +89,14 @@ public class PackageController {
 			String xml=new String(file.getBytes());
 			Long numVersions=actualObj.get("numVersions").asLong();
 			Long numPackages=actualObj.get("numPackages").asLong();			
+			Long startNumPackage=actualObj.get("startNumPackage").asLong();			
 			String cuid=actualObj.get("cuid").asText();
 			//test reload
 			List<TestPkg> created=new ArrayList<TestPkg>();
 			
 			for(int i=1;i<=numPackages;i++) {
-				TestPkg tp = docService.createPackage(xml,numVersions,cuid+i);
+				long index= i+startNumPackage-1;
+				TestPkg tp = docService.createPackage(xml,numVersions,cuid+index);
 				created.add(tp);
 			}
 
@@ -111,7 +113,7 @@ public class PackageController {
 //		    // convert `ObjectNode` to pretty-print JSON
 //		    // without pretty-print, use `user.toString()` method
 //		    String ret = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jpkg);
-		String ret="full test set ready to rock";
+		String ret="full test set ready to rock edit rules'";
 			
 			
 		return new ResponseEntity<>(ret, HttpStatus.OK);

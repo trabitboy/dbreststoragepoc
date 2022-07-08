@@ -1,6 +1,10 @@
 package org.trab.test.dbreststorage.controller;
 
+import javax.persistence.OptimisticLockException;
+
 import org.hibernate.StaleStateException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,6 +19,7 @@ import org.trab.test.dbreststorage.service.DocService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+
 @RestController
 public class MinorVersionController {
 
@@ -25,18 +30,19 @@ public class MinorVersionController {
 	DocService docService;
 	
 	
-	
-	
-
+	Logger logger = LoggerFactory.getLogger(MinorVersionController.class);
 	
 	//alternate to json embed the xml
 	// just because jmeter and eclise text editors dont like 110k on one line
 	@PostMapping(path="/minorversion/multipart/createFromXml/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<String> uploadFile(
+//			@RequestBody String jmeterJson, //we can inject variables in jmeter scripts (not working, cant get jmeter to send body +2 multipart files
 			@RequestParam("metadata") String json, 
 			@RequestParam("file") MultipartFile file) 
 	{
 		try {
+			
+			
 			JsonNode actualObj = mapper.readTree(json);
 			String cuid= actualObj.get("cuid").asText();
 			String xml=new String(file.getBytes());
@@ -44,11 +50,17 @@ public class MinorVersionController {
 //			System.out.println(xml);
 			long id=docService.saveMinorVersionFromCuid(cuid, xml,wait);
 			String ret=Long.toString(id);
-			return new ResponseEntity<>(ret, HttpStatus.OK);
+			return new ResponseEntity<>("save success "+ret, HttpStatus.OK);
 		} catch (StaleStateException e) {
-			e.printStackTrace();
-			return new ResponseEntity<>("concurrency error", HttpStatus.INTERNAL_SERVER_ERROR);
-		
+//			e.printStackTrace();
+			// optimistick lock is a feature, should not cause request to fail (business exception)
+			logger.error("optimistic lock");
+			return new ResponseEntity<>("concurrency error", HttpStatus.OK);
+		} catch (OptimisticLockException e) {
+//			e.printStackTrace();
+			// optimistick lock is a feature, should not cause request to fail (business exception)
+			logger.error("optimistic lock");
+			return new ResponseEntity<>("concurrency error", HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<>("post NOT ok", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -76,31 +88,6 @@ public class MinorVersionController {
 			e.printStackTrace();
 			return new ResponseEntity<>("post NOT ok", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		
-		//TODO make service to save miv from mav id and xml
-//		docSer vice.
-//		String ret="TODO not finished";
-//		return new ResponseEntity<>(ret, HttpStatus.OK);
-	}
-	
-//	@PostMapping(value = {"/minorversion/createFromMavId"}, produces = "application/json")
-//	public ResponseEntity<String> createMajorVersion(
-//			@RequestBody String json
-//	) {
-////		System.out.println(json
-////				);
-//		try {
-//			JsonNode actualObj = mapper.readTree(json);
-//			String name = actualObj.get("mavid").asText();
-//			String xml=actualObj.get("xml").asText();
-////			System.out.println(xml);
-//			long id=docService.saveMajorVersionWithXml(name, xml);
-//			String ret=Long.toString(id);
-//			return new ResponseEntity<>(ret, HttpStatus.OK);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			return new ResponseEntity<>("post NOT ok", HttpStatus.OK);
-//		}
-//	}
+	}		
 
 }
