@@ -39,8 +39,19 @@ public class MinorVersion {
 	@Version 
 	long version;
 	
+	@ManyToOne
+	@JoinColumn(name = "DOCUMENT_ID")
+	private Document document;
+
 	
-	
+	public Document getDocument() {
+		return document;
+	}
+
+	public void setDocument(Document document) {
+		this.document = document;
+	}
+
 	public long getVersion() {
 		return version;
 	}

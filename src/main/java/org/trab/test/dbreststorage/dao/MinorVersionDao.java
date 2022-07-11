@@ -2,6 +2,7 @@ package org.trab.test.dbreststorage.dao;
 
 import java.util.List;
 
+import org.trab.test.dbreststorage.dao.jdbc.MinorVersionJDTO;
 import org.trab.test.dbreststorage.entity.MinorVersion;
 
 
@@ -22,4 +23,10 @@ public interface MinorVersionDao {
 	List<MinorVersion> findVersionsWithDocumentId(long idDoc);
 
 	MinorVersion getLatestMinorVersionFromCuid(String cuid);
+	
+	List<MinorVersionJDTO> jdGetLast100Versiont(String cuid);
+
+	List<MinorVersion> jpaGetLast100Version(String cuid);
+
+	
 }

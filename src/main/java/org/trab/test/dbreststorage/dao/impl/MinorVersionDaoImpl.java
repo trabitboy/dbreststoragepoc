@@ -12,9 +12,15 @@ import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.LockMode;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.trab.test.dbreststorage.dao.MinorVersionDao;
+import org.trab.test.dbreststorage.dao.jdbc.JMinorVersionDTOMapper;
+import org.trab.test.dbreststorage.dao.jdbc.MinorVersionJDTO;
 import org.trab.test.dbreststorage.entity.MajorVersion;
 import org.trab.test.dbreststorage.entity.MinorVersion;
 import org.trab.test.dbreststorage.entity.XmlContent;
@@ -23,6 +29,10 @@ import org.trab.test.dbreststorage.util.AbstractHibernateDao;
 @Repository("MinorVersionDao")
 public class MinorVersionDaoImpl extends AbstractHibernateDao implements MinorVersionDao {
 
+	@Autowired
+	JdbcTemplate jdbcTemplate;
+	
+	
 	
 	public MinorVersion find(long id) {
 		return (MinorVersion) this.getCurrentSession().find(MinorVersion.class, id);
@@ -73,7 +83,8 @@ public class MinorVersionDaoImpl extends AbstractHibernateDao implements MinorVe
 		
 	}
 
-	
+
+	//NOT WORKING , sub criteria necessary
 	@SuppressWarnings("unchecked")
 	public List<MinorVersion> findVersionsWithDocumentId(long idDoc){
 		List<MinorVersion> toReturn = this.getCurrentSession().createCriteria(MinorVersion.class).add(Restrictions.eq("document.id", new Long(idDoc))).list();
@@ -117,5 +128,42 @@ public class MinorVersionDaoImpl extends AbstractHibernateDao implements MinorVe
 		myCrit.add(Restrictions.eq("cuid", cuid));
 		List<MinorVersion> toReturn = myCrit.list();
 		return toReturn.get(0);
+	}
+
+
+
+	@Override
+	//WIP
+	public List<MinorVersionJDTO> jdGetLast100Versiont(String cuid) {
+		
+		
+		String realSql= "	select this_.id as id1_3_5_," + 
+				"	 this_.name as name4_3_5_," + 
+				"	 from minor_version this_ inner join document document1_ on this_.document_id=document1_.id" + 
+				"	 where document1_.cuid='"+cuid+"' limit 100" + 
+				"";
+		String  helloSql = "select NAME from MINOR_VERSION";
+		
+		return jdbcTemplate.query(realSql ,new JMinorVersionDTOMapper());
+	}
+
+//TODO trimmed down sql output to put above
+//	select this_.id as id1_3_5_,
+//	 this_.name as name4_3_5_, 
+//	 from minor_version this_ inner join document document1_ on this_.document_id=document1_.id 
+//	 where document1_.cuid='test_cuid3' limit 5	
+	
+	
+
+
+	@Override
+	public List<MinorVersion> jpaGetLast100Version(String cuid) {
+		Criteria crit = this.getCurrentSession().createCriteria(MinorVersion.class);
+		crit=crit.createCriteria("document");
+		crit=crit.add(Restrictions.eq("cuid", cuid));
+
+		crit=crit.setMaxResults(100);
+		List<MinorVersion> toReturn = crit.list();
+		return toReturn;
 	}	
 }

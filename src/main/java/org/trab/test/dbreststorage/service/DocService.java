@@ -3,6 +3,7 @@ package org.trab.test.dbreststorage.service;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.trab.test.dbreststorage.dao.jdbc.MinorVersionJDTO;
 import org.trab.test.dbreststorage.entity.DocPackage;
 import org.trab.test.dbreststorage.entity.MajorVersion;
 import org.trab.test.dbreststorage.entity.MinorVersion;
@@ -12,7 +13,7 @@ import org.trab.test.dbreststorage.service.impl.TestPkg;
 public interface DocService {
 
 	public Long saveMinorVersionFromMavId(long mavId,String xml);
-	public Long saveMinorVersionFromCuid(String cuid,String xml,boolean testExtraWait);
+	public Long saveMinorVersionFromCuid(String cuid,String xml,boolean testExtraWait,boolean jpql);
 	
 	
 	public List<MajorVersion> allMajorVersionWithXmls(long mvId);
@@ -33,7 +34,8 @@ public interface DocService {
 	 */
 	public TestPkg createPackage(String xml,long minVerNum, String cuid);
 	
+	public List<MinorVersionJDTO> getLast100(String cuid);
 	
-	
+	public List<MinorVersion> jpaGetLast100(String cuid);
 	
 }

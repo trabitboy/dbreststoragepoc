@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
+import javax.persistence.Query;
 
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.trab.test.dbreststorage.dao.DocPackageDao;
 import org.trab.test.dbreststorage.dao.DocumentDao;
 import org.trab.test.dbreststorage.dao.MajorVersionDao;
 import org.trab.test.dbreststorage.dao.MinorVersionDao;
+import org.trab.test.dbreststorage.dao.jdbc.MinorVersionJDTO;
 import org.trab.test.dbreststorage.entity.DocPackage;
 import org.trab.test.dbreststorage.entity.Document;
 import org.trab.test.dbreststorage.entity.MajorVersion;
@@ -73,10 +75,18 @@ public class DocServiceImpl implements DocService {
 		xc.setMajorVersion(mav);
 		mav.setName("test");
 
+		Document doc=new Document();
+		doc.setName("test");
+		doc.setCuid(cuid);
+		doc.getMajorVersions().add(mav);
+		mav.setDocument(doc);
+
+		
 		for (int i=1;i<=minVerNum;i++) {
 			XmlContent xcmiv=new XmlContent();
 			xcmiv.setXml(xml);
 			MinorVersion miv =new MinorVersion();
+			miv.setName("test"+i);
 			miv.getXmls().add(xcmiv);
 			xcmiv.setMinorVersion(miv);
 			mav.getMinorVersions().add(miv);
@@ -85,15 +95,12 @@ public class DocServiceImpl implements DocService {
 			{
 				miv.setLatestVersion(true);
 			}
+			doc.getMinorVersions().add(miv);
+			miv.setDocument(doc);
 		}
 		
 		
 		
-		Document doc=new Document();
-		doc.setName("test");
-		doc.setCuid(cuid);
-		doc.getMajorVersions().add(mav);
-		mav.setDocument(doc);
 		
 		DocPackage pkg=new DocPackage();
 		pkg.setName("test");	
@@ -113,6 +120,7 @@ public class DocServiceImpl implements DocService {
 		Hibernate.initialize(dp.getDocuments());
 		for(Document d : dp.getDocuments()) {
 			Hibernate.initialize(d.getMajorVersions());
+			Hibernate.initialize(d.getMinorVersions());
 			for(MajorVersion mav : d.getMajorVersions()) {
 				Hibernate.initialize(mav.getMinorVersions());
 				Hibernate.initialize(mav.getXmls());
@@ -157,7 +165,7 @@ public class DocServiceImpl implements DocService {
 	}
 
 	@Transactional
-	public Long saveMinorVersionFromCuid(String cuid, String xml,boolean testExtraWait) {
+	public Long saveMinorVersionFromCuid(String cuid, String xml,boolean testExtraWait,boolean jpql) {
 		MinorVersion prevLatest = minorVersionDao.getLatestMinorVersionFromCuid(cuid);
 		entityManager.lock(prevLatest, LockModeType.OPTIMISTIC);
 		//with the above line, hibernate executes an extra:
@@ -180,12 +188,21 @@ public class DocServiceImpl implements DocService {
 		
 		//TODO check overhead of get id ( do we get all maj version// colls?
 		long mavid = prevLatest.getMajorVersion().getId();
-		entityManager.createNativeQuery("update minor_version set major_version_id="+mavid+" WHERE id="+nlv.getId()).executeUpdate();
-		
-		//TODO add manual optimistic locking here
-		// this select probably needs to be in another transaction?
-		// do a select to see if another latest has been created, if yes, throw a runtime busness exception > it will rollback transaction
-		// for concurrency>many users on one doc
+		long docid = prevLatest.getDocument().getId();
+		//TODO jpql would make it portable
+
+		if (jpql) {
+			Query q=entityManager.createQuery("UPDATE MinorVersion miv SET miv.document.id=?1,miv.majorVersion.id=?2 where miv.id=?3");
+			q.setParameter(1, docid);
+			q.setParameter(2, mavid);
+			q.setParameter(3, nlv.getId());			
+			int count=q.executeUpdate();
+			System.out.println(count +" updated miv from jpql");
+//			entityManager.executeU("update minor_version set major_version_id="+mavid+",document_id="+docid+" WHERE id="+nlv.getId()).executeUpdate();
+		}else {
+			entityManager.createNativeQuery("update minor_version set major_version_id="+mavid+",document_id="+docid+" WHERE id="+nlv.getId()).executeUpdate();
+			
+		}
 		
 		//wait 10 seconds for concurrency test
 		if (testExtraWait) {
@@ -199,6 +216,16 @@ public class DocServiceImpl implements DocService {
 		}
 		
 		return nlv.getId();
+	}
+
+	@Transactional(readOnly = true)
+	public List<MinorVersionJDTO> getLast100(String cuid) {
+		return minorVersionDao.jdGetLast100Versiont(cuid);
+	}
+
+	@Transactional(readOnly = true)
+	public List<MinorVersion> jpaGetLast100(String cuid) {
+		return minorVersionDao.jpaGetLast100Version(cuid);
 	}
 	
 	//TODO alternate method with manual optimistic lock implementation ^^ (for fun and profit) with sub method

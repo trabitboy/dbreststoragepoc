@@ -48,7 +48,7 @@ public class MinorVersionController {
 			String xml=new String(file.getBytes());
 			boolean wait = actualObj.get("wait").asBoolean();
 //			System.out.println(xml);
-			long id=docService.saveMinorVersionFromCuid(cuid, xml,wait);
+			long id=docService.saveMinorVersionFromCuid(cuid, xml,wait,false);
 			String ret=Long.toString(id);
 			return new ResponseEntity<>("save success "+ret, HttpStatus.OK);
 		} catch (StaleStateException e) {

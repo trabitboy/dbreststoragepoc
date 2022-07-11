@@ -74,6 +74,23 @@ public class Document {
 	private List<MajorVersion> majorVersions = new ArrayList<MajorVersion>();
 
 
+	
+	@OneToMany(
+			cascade = CascadeType.ALL
+			, mappedBy = "document"
+			, fetch = FetchType.LAZY
+			)
+	private List<MinorVersion> minorVersions = new ArrayList<MinorVersion>();
+
+	
+	public List<MinorVersion> getMinorVersions() {
+		return minorVersions;
+	}
+
+	public void setMinorVersions(List<MinorVersion> minorVersions) {
+		this.minorVersions = minorVersions;
+	}
+
 	public Document() {
 	}
 

@@ -1,10 +1,14 @@
 package org.trab.test.dbreststorage;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.trab.test.dbreststorage.dao.jdbc.MinorVersionJDTO;
 import org.trab.test.dbreststorage.entity.DocPackage;
 import org.trab.test.dbreststorage.entity.Document;
 import org.trab.test.dbreststorage.entity.MajorVersion;
@@ -28,6 +32,32 @@ class DbreststorageApplicationTests {
 		jtest.doSomething();
 		
 	}
+
+	@Test
+	void jdversions() {
+		Long id =docService.createPackage("<xml>dummy</xml>",1, "jdtest").pkgId;
+		List<MinorVersionJDTO>ret=docService.getLast100("jdtest");
+		for(MinorVersionJDTO d:ret) {
+			System.out.println(d.name);
+		}
+		assertTrue(1<= ret.size());
+	}
+
+	@Test
+	void testJpaVersions() {
+		
+		TestPkg tp = docService.createPackage("<xml></xml>", 1, "jpaversions");
+//		System.out.println();
+		Long mivId=docService.saveMinorVersionFromMavId(tp.mavId,"latest");
+//		MinorVersion toTest = docService.getMinorVersionWithMajor(mivId);
+//		System.out.println(toTest.getMajorVersion().getId());
+		List<MinorVersion>ret=docService.jpaGetLast100("jpaversions");
+		assertTrue(1<= ret.size());
+		
+	}
+
+	
+	
 	
 	@Test
 	void contextLoads() {
@@ -93,4 +123,29 @@ class DbreststorageApplicationTests {
 		System.out.println(toTest.getMajorVersion().getId());
 	}
 
+	
+	@Test
+	void testSaveLatestMinorVersionFromCuid() {
+		
+		TestPkg tp = docService.createPackage("<xml></xml>", 1, "smv");
+//		System.out.println();
+		Long mivId=docService.saveMinorVersionFromCuid("smv", "bla",false,false);
+		DocPackage pkg = docService.testGetAllPackageInitialized(tp.pkgId);
+		assertEquals(pkg.getDocuments().get(0).getMinorVersions().size(),2);
+		//		MinorVersion toTest = docService.getLast100(cuid)(mivId);
+//		System.out.println(toTest.getMajorVersion().getId());
+	}
+	
+	@Test
+	void testSaveLatestMinorVersionFromCuidJpqlUpdateLink() {
+		
+		TestPkg tp = docService.createPackage("<xml></xml>", 1, "jpqlsmv");
+//		System.out.println();
+		Long mivId=docService.saveMinorVersionFromCuid("jpqlsmv", "bla",false,true);
+		DocPackage pkg = docService.testGetAllPackageInitialized(tp.pkgId);
+		assertEquals(pkg.getDocuments().get(0).getMinorVersions().size(),2);
+		//		MinorVersion toTest = docService.getLast100(cuid)(mivId);
+//		System.out.println(toTest.getMajorVersion().getId());
+	}
+	
 }
