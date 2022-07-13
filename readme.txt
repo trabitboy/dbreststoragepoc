@@ -40,6 +40,10 @@ DONE
 WIP
 
 -- flatten model> merge minor version and major version
+-- linking minvor version to document
+-- jdbc template example to get latest 100 minor versions
+-- jmeter with get minor version
+-- suppress major version from model
 
 -- how to optimize result of query when searching latest version
 -- flag?
@@ -78,4 +82,4 @@ how to maximize availability (config of tomcat threadpool,
 
 
 
-33H00 h work so far (1/3 dev 2/3 jmeter)
+35H30 h work so far (1/3 dev 2/3 jmeter)

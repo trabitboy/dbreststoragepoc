@@ -6,6 +6,13 @@ select this_.id as id1_3_5_,
 		 from minor_version this_ inner join document document1_ on this_.document_id=document1_.id 
 		 where document1_.cuid=? limit ?
 
+--not working
+select this_.id as id1_3_5_,	 this_.name as name4_3_5_,	 from minor_version this_ inner join document document1_ on this_.document_id=document1_.id	 where document1_.cuid='select_cuid3' limit 100
+--working
+select this_.id as id1_3_5_,	 this_.name as name4_3_5_	 from minor_version this_ inner join document document1_ on this_.document_id=document1_.id where document1_.cuid='test_cuid3' limit 100
+
+
+
 --hibernate
 select this_.id as id1_3_5_,
 		 this_.document_id as document7_3_5_, 

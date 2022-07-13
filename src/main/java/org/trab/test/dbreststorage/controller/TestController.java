@@ -64,27 +64,7 @@ public class TestController {
 		return new ResponseEntity<>("test"+id+" test prop "+testProp, HttpStatus.OK);
 	}
 		
-	
-	@PostMapping(value = {"/smv"}, produces = "application/json")
-	public ResponseEntity<String> smv(
-	@RequestBody String xml
-	) {
-//		TransactionTemplate tt = new TransactionTemplate(transactionManager);
-//		 tt.execute(new TransactionCallback() {
-//
-//			@Override
-//			public Object doInTransaction(TransactionStatus status) {
-//				majorVersionDao.saveMajorVersionWithXml("tata", xml);
-//				return null;
-//			}
-//		});
 
-//		 System.out.println(entityManager);
-		
-		System.out.println(xml);
-		
-		return new ResponseEntity<>("saved", HttpStatus.OK);
-	}
 	
 	
 }

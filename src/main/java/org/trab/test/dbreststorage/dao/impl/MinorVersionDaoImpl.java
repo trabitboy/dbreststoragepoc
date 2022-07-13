@@ -131,18 +131,23 @@ public class MinorVersionDaoImpl extends AbstractHibernateDao implements MinorVe
 	}
 
 
-
+	//TODO for some reason works with number id or no where (both controller and test)
+	// but embedding string cuid in where does not work
 	@Override
-	//WIP
 	public List<MinorVersionJDTO> jdGetLast100Versiont(String cuid) {
 		
 		
+		//WIP works from test but not controller, lets try to rewrite it without a join
+		//fetch document id, then fetch last versions
 		String realSql= "	select this_.id as id1_3_5_," + 
-				"	 this_.name as name4_3_5_," + 
-				"	 from minor_version this_ inner join document document1_ on this_.document_id=document1_.id" + 
-				"	 where document1_.cuid='"+cuid+"' limit 100" + 
-				"";
-		String  helloSql = "select NAME from MINOR_VERSION";
+				"	 this_.name as NAME, document1.id as DID" + 
+				"	 from minor_version this_ inner join document document1 on this_.document_id=document1.id" +
+//				" where document1.cuid= \"select_cuid3\" " +
+//				"	 where document1_.cuid='"+cuid+"' limit 100" + without where it works
+				" limit 100";
+		
+		
+//		String  helloSql = "select NAME from MINOR_VERSION";
 		
 		return jdbcTemplate.query(realSql ,new JMinorVersionDTOMapper());
 	}
