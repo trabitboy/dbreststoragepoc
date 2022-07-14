@@ -20,10 +20,11 @@ import javax.persistence.Table;
 public class XmlContent {
 
 	@SequenceGenerator(
-	        name="CFC_XML_CONTENT_SEQUENCE_GENERATOR",
-	        sequenceName="CFC_XML_CONTENT_SEQ",
+	        name="XML_CONTENT_SEQUENCE_GENERATOR",
+	        sequenceName="XML_CONTENT_SEQ",
 	        initialValue=1,
-	        allocationSize=50//check if automated schema creation is compatible
+	        allocationSize=1//check if automated schema creation is compatible
+	        //50
 	    )
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="XML_CONTENT_SEQUENCE_GENERATOR")
 	@Id 
