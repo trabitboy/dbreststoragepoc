@@ -11,7 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.trab.test.dbreststorage.dao.jdbc.MinorVersionJDTO;
 import org.trab.test.dbreststorage.entity.DocPackage;
 import org.trab.test.dbreststorage.entity.Document;
-import org.trab.test.dbreststorage.entity.MajorVersion;
 import org.trab.test.dbreststorage.entity.MinorVersion;
 import org.trab.test.dbreststorage.jdbc.template.JdbcTest;
 import org.trab.test.dbreststorage.service.DocService;
@@ -48,7 +47,7 @@ class DbreststorageApplicationTests {
 		
 		TestPkg tp = docService.createPackage("<xml></xml>", 1, "jpaversions");
 //		System.out.println();
-		Long mivId=docService.saveMinorVersionFromMavId(tp.mavId,"latest");
+		//Long mivId=docService.saveMinorVersionFromMavId(tp.mavId,"latest");
 //		MinorVersion toTest = docService.getMinorVersionWithMajor(mivId);
 //		System.out.println(toTest.getMajorVersion().getId());
 		List<MinorVersion>ret=docService.jpaGetLast100("jpaversions");
@@ -63,11 +62,12 @@ class DbreststorageApplicationTests {
 	void contextLoads() {
 	}
 	
-	@Test
+/*	@Test
 	void testAllMajorVersion() {
 		docService.saveMajorVersionWithXml("test","<xml>test</test>");
 		docService.allMajorVersionWithXmls(1);
 	}
+	*/
 	
 	@Test
 	void testCreateTestPackage() {
@@ -79,11 +79,11 @@ class DbreststorageApplicationTests {
 		System.out.println("number of document " +fresh.getDocuments().size());
 		assertEquals(fresh.getDocuments().size(),1);
 		Document d=fresh.getDocuments().get(0);
-		assertEquals(d.getMajorVersions().size(),1);
-		MajorVersion mav = d.getMajorVersions().get(0);
-		assertEquals(mav.getXmls().size(),1);
-		assertEquals(mav.getMinorVersions().size(),1);
-		MinorVersion miv = mav.getMinorVersions().get(0);
+//		assertEquals(d.getMajorVersions().size(),1);
+		//MajorVersion mav = d.getMajorVersions().get(0);
+//		assertEquals(mav.getXmls().size(),1);
+//		assertEquals(mav.getMinorVersions().size(),1);
+		MinorVersion miv = d.getMinorVersions().get(0);
 		assertEquals(miv.getXmls().size(),1);
 		assertEquals(miv.getLatestVersion(),true);
 		
@@ -100,29 +100,33 @@ class DbreststorageApplicationTests {
 //		assertEquals(fresh.getDocuments().size(),1);
 		Document d=fresh.getDocuments().get(0);
 //		assertEquals(d.getMajorVersions().size(),1);
-		MajorVersion mav = d.getMajorVersions().get(0);
+		//MajorVersion mav = d.getMajorVersions().get(0);
 //		assertEquals(mav.getXmls().size(),1);
-		assertEquals(mav.getMinorVersions().size(),100);
-		MinorVersion miv = mav.getMinorVersions().get(99);
+		//assertEquals(mav.getMinorVersions().size(),100);
+		MinorVersion miv = d.getMinorVersions().get(99); //   mav.getMinorVersions().get(99);
 		assertEquals(miv.getXmls().size(),1);
 		assertEquals(miv.getLatestVersion(),true);
 		
-		for(MinorVersion tmiv : mav.getMinorVersions()) {
+		for(MinorVersion tmiv : d.getMinorVersions()) 
+		{
 			assertEquals(tmiv.getXmls().size(),1);
 		
 		}
 	}
-	
+
+/*
 	@Test
 	void testSaveLatestMinorVersionFromMavId() {
 		
 		TestPkg tp = docService.createPackage("<xml></xml>", 1, null);
 //		System.out.println();
+//		Long mivId=docService.saveMinorVersionFromMavId(tp.mavId,"latest");
+    
 		Long mivId=docService.saveMinorVersionFromMavId(tp.mavId,"latest");
-		MinorVersion toTest = docService.getMinorVersionWithMajor(mivId);
-		System.out.println(toTest.getMajorVersion().getId());
+//		MinorVersion toTest = docService.getMinorVersionWithMajor(mivId);
+		//System.out.println(toTest.getMajorVersion().getId());
 	}
-
+*/
 	
 	@Test
 	void testSaveLatestMinorVersionFromCuid() {

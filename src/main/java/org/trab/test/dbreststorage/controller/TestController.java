@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.trab.test.dbreststorage.dao.DocumentDao;
-import org.trab.test.dbreststorage.dao.MajorVersionDao;
 
 @RestController
 public class TestController {
@@ -28,8 +27,8 @@ public class TestController {
 	@Autowired
 	DocumentDao documentDao;
 	
-	@Autowired
-	MajorVersionDao majorVersionDao;
+//	@Autowired
+//	MajorVersionDao majorVersionDao;
 	
     @Autowired
     private PlatformTransactionManager transactionManager;

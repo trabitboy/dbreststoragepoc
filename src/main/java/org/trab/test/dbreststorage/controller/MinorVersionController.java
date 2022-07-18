@@ -27,36 +27,30 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
 @RestController
 public class MinorVersionController {
 
 	ObjectMapper mapper = new ObjectMapper();
 
-	
 	@Autowired
 	DocService docService;
-	
-	
+
 	Logger logger = LoggerFactory.getLogger(MinorVersionController.class);
 
-	
-	//alternate to json embed the xml
+	// alternate to json embed the xml
 	// just because jmeter and eclise text editors dont like 110k on one line
-	@PostMapping(path="/minorversion/jdlast100/", produces = "application/json")
-	public ResponseEntity<String> last100(
-			@RequestBody String json 
-			) {
+	@PostMapping(path = "/minorversion/jdlast100/", produces = "application/json")
+	public ResponseEntity<String> last100(@RequestBody String json) {
 		try {
 			JsonNode actualObj = mapper.readTree(json);
 
 			String cuid = actualObj.get("cuid").asText();
-			//TODO for some reason works in unit test, but here returns empty list
-			List<MinorVersionJDTO> ret=docService.getLast100(cuid);
-			System.out.println(cuid+" num versions "+ret.size());
-			ByteArrayOutputStream baos=new ByteArrayOutputStream();
+			// TODO for some reason works in unit test, but here returns empty list
+			List<MinorVersionJDTO> ret = docService.getLast100(cuid);
+			System.out.println(cuid + " num versions " + ret.size());
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			mapper.writeValue(baos, ret);
-			byte[] bs=baos.toByteArray();
+			byte[] bs = baos.toByteArray();
 //			System.out.println(baos.toString());
 			return new ResponseEntity<>(new String(bs), HttpStatus.OK);
 		} catch (JsonMappingException e) {
@@ -69,37 +63,34 @@ public class MinorVersionController {
 			e.printStackTrace();
 			return new ResponseEntity<>("post NOT ok", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		
+
 	}
-	
-	
-	
-	//alternate to json embed the xml
+
+	// alternate to json embed the xml
 	// just because jmeter and eclise text editors dont like 110k on one line
-	@PostMapping(path="/minorversion/multipart/createFromXml/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<String> uploadFile(
-			@RequestParam("metadata") String json, 
-			@RequestParam("file") MultipartFile file) 
-	{
+	@PostMapping(path = "/minorversion/multipart/createFromXml/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<String> uploadFile(@RequestParam("metadata") String json,
+			@RequestParam("file") MultipartFile file) {
 		try {
-			
-			
+
 			JsonNode actualObj = mapper.readTree(json);
-			String cuid= actualObj.get("cuid").asText();
-			String xml=new String(file.getBytes());
+			String cuid = actualObj.get("cuid").asText();
+			String xml = new String(file.getBytes());
 			boolean wait = actualObj.get("wait").asBoolean();
 //			System.out.println(xml);
-			long id=docService.saveMinorVersionFromCuid(cuid, xml,wait,false);
-			String ret=Long.toString(id);
-			return new ResponseEntity<>("save success "+ret, HttpStatus.OK);
+			long id = docService.saveMinorVersionFromCuid(cuid, xml, wait, false);
+			String ret = Long.toString(id);
+			return new ResponseEntity<>("save success " + ret, HttpStatus.OK);
 		} catch (StaleStateException e) {
 //			e.printStackTrace();
-			// optimistick lock is a feature, should not cause request to fail (business exception)
+			// optimistick lock is a feature, should not cause request to fail (business
+			// exception)
 			logger.error("optimistic lock");
 			return new ResponseEntity<>("concurrency error", HttpStatus.OK);
 		} catch (OptimisticLockException e) {
 //			e.printStackTrace();
-			// optimistick lock is a feature, should not cause request to fail (business exception)
+			// optimistick lock is a feature, should not cause request to fail (business
+			// exception)
 			logger.error("optimistic lock");
 			return new ResponseEntity<>("concurrency error", HttpStatus.OK);
 		} catch (Exception e) {
@@ -108,27 +99,24 @@ public class MinorVersionController {
 		}
 
 	}
-	
-	
-	
-	
-	@PostMapping(value = {"/minorversion/createFromXml"}, produces = "application/json")
-	public ResponseEntity<String> userEdits(
-			@RequestBody String json
-	) {
-		
+
+	/*
+	@PostMapping(value = { "/minorversion/createFromXml" }, produces = "application/json")
+	public ResponseEntity<String> userEdits(@RequestBody String json) {
+
 		try {
 			JsonNode actualObj = mapper.readTree(json);
-			Long mavid= actualObj.get("mavid").asLong();
-			String xml=actualObj.get("xml").asText();
+			Long mavid = actualObj.get("mavid").asLong();
+			String xml = actualObj.get("xml").asText();
 //			System.out.println(xml);
-			long id=docService.saveMinorVersionFromMavId(mavid, xml);
-			String ret=Long.toString(id);
+//			long id = docService.saveMinorVersionFromMavId(mavid, xml);
+			String ret = Long.toString(id);
 			return new ResponseEntity<>(ret, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<>("post NOT ok", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-	}		
+	}
+	*/
 
 }

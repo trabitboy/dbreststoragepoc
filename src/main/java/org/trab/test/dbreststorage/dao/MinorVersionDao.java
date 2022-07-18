@@ -14,7 +14,7 @@ public interface MinorVersionDao {
 	
 	Long saveMinorVersionWithXml(String name,String xml);
 
-	MinorVersion getLatestMinorVersionFromMavId(long mavId);
+//	MinorVersion getLatestMinorVersionFromMavId(long mavId);
 	
 	List<MinorVersion> list();
 

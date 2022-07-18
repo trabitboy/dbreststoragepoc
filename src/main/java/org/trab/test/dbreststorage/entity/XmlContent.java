@@ -65,10 +65,6 @@ public class XmlContent {
 	}
 
 
-	@ManyToOne
-	@JoinColumn(name = "MAJOR_VERSION_ID")
-	private MajorVersion majorVersion;
-	
 	
 	public long getId() {
 		return id;
@@ -92,11 +88,4 @@ public class XmlContent {
 		return sBuilder.toString();
 	}
 
-	public MajorVersion getMajorVersion() {
-		return majorVersion;
-	}
-
-	public void setMajorVersion(MajorVersion majorVersion) {
-		this.majorVersion = majorVersion;
-	}
 }

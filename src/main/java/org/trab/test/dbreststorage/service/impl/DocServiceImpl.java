@@ -14,12 +14,11 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.trab.test.dbreststorage.dao.DocPackageDao;
 import org.trab.test.dbreststorage.dao.DocumentDao;
-import org.trab.test.dbreststorage.dao.MajorVersionDao;
 import org.trab.test.dbreststorage.dao.MinorVersionDao;
 import org.trab.test.dbreststorage.dao.jdbc.MinorVersionJDTO;
 import org.trab.test.dbreststorage.entity.DocPackage;
 import org.trab.test.dbreststorage.entity.Document;
-import org.trab.test.dbreststorage.entity.MajorVersion;
+
 import org.trab.test.dbreststorage.entity.MinorVersion;
 import org.trab.test.dbreststorage.entity.XmlContent;
 import org.trab.test.dbreststorage.service.DocService;
@@ -43,60 +42,53 @@ public class DocServiceImpl implements DocService {
 	@Autowired
 	DocPackageDao docPackageDao;
 	
-	@Autowired
-	MajorVersionDao majorVersionDao;
 
 	@Autowired
 	MinorVersionDao minorVersionDao;
 	
-	
-	
-	@Transactional
-	public List<MajorVersion> allMajorVersionWithXmls(long mvId) {
-		return majorVersionDao.listWithXmls();
-	}
 
-	//atomic
-	@Transactional(propagation =  Propagation.REQUIRES_NEW)
-	public long saveMajorVersionWithXml(String name, String xml) {
-		return majorVersionDao.saveMajorVersionWithXml(name, xml);
-	}
 
 	//atomic
 	@Transactional(propagation =  Propagation.REQUIRES_NEW)
 	public TestPkg createPackage(String xml,long minVerNum,String cuid) {
 
-		XmlContent xc=new XmlContent();
-		xc.setXml(xml);
+		//XmlContent xc=new XmlContent();
+//		xc.setXml(xml);
 //		
 //
-		MajorVersion mav =new MajorVersion();
+//		MinorVersion miv = new MinorVersion();
+		
+/*		MajorVersion mav =new MajorVersion();
 		mav.getXmls().add(xc);
 		xc.setMajorVersion(mav);
 		mav.setName("test");
 
+		
+		doc.getMajorVersions().add(mav);
+		mav.setDocument(doc);
+*/
+
 		Document doc=new Document();
 		doc.setName("test");
 		doc.setCuid(cuid);
-		doc.getMajorVersions().add(mav);
-		mav.setDocument(doc);
+//		doc.get().add(mav);
+		//mav.setDocument(doc);
 
-		
 		for (int i=1;i<=minVerNum;i++) {
 			XmlContent xcmiv=new XmlContent();
 			xcmiv.setXml(xml);
-			MinorVersion miv =new MinorVersion();
-			miv.setName("test"+i);
-			miv.getXmls().add(xcmiv);
-			xcmiv.setMinorVersion(miv);
-			mav.getMinorVersions().add(miv);
-			miv.setMajorVersion(mav);
+			MinorVersion miv1 =new MinorVersion();
+			miv1.setName("test"+i);
+			miv1.getXmls().add(xcmiv);
+			xcmiv.setMinorVersion(miv1);
+//			mav.getMinorVersions().add(miv);
+			//miv.setMajorVersion(;
 			if (i==minVerNum)
 			{
-				miv.setLatestVersion(true);
+				miv1.setLatestVersion(true);
 			}
-			doc.getMinorVersions().add(miv);
-			miv.setDocument(doc);
+			doc.getMinorVersions().add(miv1);
+			miv1.setDocument(doc);
 		}
 		
 		
@@ -110,7 +102,10 @@ public class DocServiceImpl implements DocService {
 		 Long created = docPackageDao.save(pkg);
 		 entityManager.flush(); //sql executed, ids generated
 		 
-		 return new TestPkg(created, mav.getId(), mav.getMinorVersions().get((int) (minVerNum-1)).getId());
+		 return new TestPkg(    created, 
+				 doc.getMinorVersions().get((int) (minVerNum-1)).getId()				 
+				 //miv.getMinorVersionNumber().get((int) (minVerNum-1)).getId()
+				 );
 	}
 	
 	//MEGATON EXPENSIVE
@@ -119,34 +114,30 @@ public class DocServiceImpl implements DocService {
 		DocPackage dp= docPackageDao.findById(id);
 		Hibernate.initialize(dp.getDocuments());
 		for(Document d : dp.getDocuments()) {
-			Hibernate.initialize(d.getMajorVersions());
+			//Hibernate.initialize(d.getMajorVersions());
 			Hibernate.initialize(d.getMinorVersions());
+			for(MinorVersion miv : d.getMinorVersions()) {
+				Hibernate.initialize(miv.getXmls());
+				
+			}
+			/*
 			for(MajorVersion mav : d.getMajorVersions()) {
 				Hibernate.initialize(mav.getMinorVersions());
 				Hibernate.initialize(mav.getXmls());
-				for(MinorVersion miv : mav.getMinorVersions()) {
-					Hibernate.initialize(miv.getXmls());
-					
-				}
 
-			}
+
+			}*/
 			
 		}
 		
 		return dp;
 	}
-
-	@Transactional
-	public MinorVersion getMinorVersionWithMajor(long mivId) {
-		MinorVersion prevLatest = minorVersionDao.find(mivId);
-		Hibernate.initialize(prevLatest.getMajorVersion());
-		return prevLatest;
-	}
+/*
 	
 	@Transactional
 	public Long saveMinorVersionFromMavId(long mavId, String xml) {
 //		miVD
-		MinorVersion prevLatest = minorVersionDao.getLatestMinorVersionFromMavId(mavId);
+//		MinorVersion prevLatest = minorVersionDao.getLatestMinorVersionFromMavId(mavId);
 		prevLatest.setLatestVersion(false);
 		
 		MinorVersion nlv = new MinorVersion();
@@ -163,7 +154,7 @@ public class DocServiceImpl implements DocService {
 		
 		return nlv.getId();
 	}
-
+*/
 	@Transactional
 	public Long saveMinorVersionFromCuid(String cuid, String xml,boolean testExtraWait,boolean jpql) {
 		MinorVersion prevLatest = minorVersionDao.getLatestMinorVersionFromCuid(cuid);
@@ -187,20 +178,19 @@ public class DocServiceImpl implements DocService {
 		//known solution from hibernate in action
 		
 		//TODO check overhead of get id ( do we get all maj version// colls?
-		long mavid = prevLatest.getMajorVersion().getId();
+		long mavid = prevLatest.getId();
 		long docid = prevLatest.getDocument().getId();
 		//TODO jpql would make it portable
 
 		if (jpql) {
-			Query q=entityManager.createQuery("UPDATE MinorVersion miv SET miv.document.id=?1,miv.majorVersion.id=?2 where miv.id=?3");
+			Query q=entityManager.createQuery("UPDATE MinorVersion miv SET miv.document.id=?1 where miv.id=?2");
 			q.setParameter(1, docid);
-			q.setParameter(2, mavid);
-			q.setParameter(3, nlv.getId());			
+			q.setParameter(2, nlv.getId());			
 			int count=q.executeUpdate();
 			System.out.println(count +" updated miv from jpql");
 //			entityManager.executeU("update minor_version set major_version_id="+mavid+",document_id="+docid+" WHERE id="+nlv.getId()).executeUpdate();
 		}else {
-			entityManager.createNativeQuery("update minor_version set major_version_id="+mavid+",document_id="+docid+" WHERE id="+nlv.getId()).executeUpdate();
+			entityManager.createNativeQuery("update minor_version set document_id="+docid+" WHERE id="+nlv.getId()).executeUpdate();
 			
 		}
 		

@@ -36,12 +36,14 @@ public class DocumentDaoImpl extends AbstractHibernateDao implements DocumentDao
 		return (Document) this.getCurrentSession().get(Document.class, id);
 		
 	}
+
 	
 	public Document findDocumentWithMVById(long idDocument){
 		
 		Document toReturn = (Document) this.getCurrentSession().get(Document.class, idDocument);
 		
-		Hibernate.initialize(toReturn.getMajorVersions()); 
+		//Hibernate.initialize(toReturn.getMajorVersions()); 
+		Hibernate.initialize(toReturn.getMinorVersions());
 		
 		return toReturn;
 	}

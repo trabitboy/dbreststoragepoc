@@ -17,9 +17,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-
-
-
 /**
  *
  */
@@ -28,13 +25,8 @@ import javax.persistence.UniqueConstraint;
 @Table(name = "DOCUMENT")
 public class Document {
 
-	@SequenceGenerator(
-	        name="DOCUMENT_SEQUENCE_GENERATOR",
-	        sequenceName="DOCUMENT_SEQ",
-	        initialValue=1,
-	        allocationSize=1
-	    )
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="DOCUMENT_SEQUENCE_GENERATOR")
+	@SequenceGenerator(name = "DOCUMENT_SEQUENCE_GENERATOR", sequenceName = "DOCUMENT_SEQ", initialValue = 1, allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "DOCUMENT_SEQUENCE_GENERATOR")
 	@Id
 	@Column(name = "ID")
 	private long id;
@@ -42,21 +34,16 @@ public class Document {
 	@Column(name = "NAME")
 	private String name;
 
-
-	
-	
 	/**
 	 * owning side of the relationship with player
 	 */
-	@ManyToOne(optional=true)
+	@ManyToOne(optional = true)
 	@JoinColumn(name = "PACKAGE_ID", nullable = true, unique = false, updatable = true)
 	private DocPackage docPackage;
 
-	
-	@Column(name = "CUID",unique = true)
+	@Column(name = "CUID", unique = true)
 	String cuid;
-	
-	
+
 	public String getCuid() {
 		return cuid;
 	}
@@ -65,24 +52,9 @@ public class Document {
 		this.cuid = cuid;
 	}
 
-	
-	@OneToMany(
-			cascade = CascadeType.ALL
-			, mappedBy = "document"
-			, fetch = FetchType.LAZY
-			)
-	private List<MajorVersion> majorVersions = new ArrayList<MajorVersion>();
-
-
-	
-	@OneToMany(
-			cascade = CascadeType.ALL
-			, mappedBy = "document"
-			, fetch = FetchType.LAZY
-			)
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "document", fetch = FetchType.LAZY)
 	private List<MinorVersion> minorVersions = new ArrayList<MinorVersion>();
 
-	
 	public List<MinorVersion> getMinorVersions() {
 		return minorVersions;
 	}
@@ -97,8 +69,6 @@ public class Document {
 	public Document(String name) {
 		this.name = name;
 	}
-
-	
 
 	public String getName() {
 		return name;
@@ -119,18 +89,8 @@ public class Document {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("Document : [").append(this.getId()).append("] name [")
-				.append(this.getName()).append("]");
+		sb.append("Document : [").append(this.getId()).append("] name [").append(this.getName()).append("]");
 		return sb.toString();
-	}
-
-
-	public void setMajorVersions(List<MajorVersion> mvs) {
-		this.majorVersions = mvs;
-	}
-
-	public List<MajorVersion> getMajorVersions() {
-		return this.majorVersions;
 	}
 
 	public long getId() {

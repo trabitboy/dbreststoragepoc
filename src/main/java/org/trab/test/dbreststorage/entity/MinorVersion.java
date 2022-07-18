@@ -95,19 +95,10 @@ public class MinorVersion {
 	}
 
 	
-	@ManyToOne
-	@JoinColumn(name = "MAJOR_VERSION_ID")
-	MajorVersion majorVersion;
+	//@ManyToOne
+//	@JoinColumn(name = "MAJOR_VERSION_ID")
+	//MajorVersion majorVersion;
 	
-
-	public MajorVersion getMajorVersion() {
-		return majorVersion;
-	}
-
-	public void setMajorVersion(MajorVersion majorVersion) {
-		this.majorVersion = majorVersion;
-	}
-
 	public long getId() {
 		return id;
 	}
@@ -148,9 +139,9 @@ public class MinorVersion {
 	}
 
 	//WIP POSSIBLE OPTIMIZATION,TO TEST (store FK of latest miv as a field in parent entity for easy querying)
-	@ManyToOne
-	@JoinColumn(name = "LTST_FOR_MAJOR_VERSION_ID")
-	MajorVersion latestForMajorVersion;
+//	@ManyToOne
+	//@JoinColumn(name = "LTST_FOR_MAJOR_VERSION_ID")
+//	MajorVersion latestForMajorVersion;
 	
 
 	
@@ -177,11 +168,4 @@ public class MinorVersion {
 		this.xmls = xmls;
 	}
 
-	public MajorVersion getLatestForMajorVersion() {
-		return latestForMajorVersion;
-	}
-
-	public void setLatestForMajorVersion(MajorVersion latestForMajorVersion) {
-		this.latestForMajorVersion = latestForMajorVersion;
-	}
 }

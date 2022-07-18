@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.trab.test.dbreststorage.dao.MinorVersionDao;
 import org.trab.test.dbreststorage.dao.jdbc.JMinorVersionDTOMapper;
 import org.trab.test.dbreststorage.dao.jdbc.MinorVersionJDTO;
-import org.trab.test.dbreststorage.entity.MajorVersion;
 import org.trab.test.dbreststorage.entity.MinorVersion;
 import org.trab.test.dbreststorage.entity.XmlContent;
 import org.trab.test.dbreststorage.util.AbstractHibernateDao;
@@ -90,7 +89,7 @@ public class MinorVersionDaoImpl extends AbstractHibernateDao implements MinorVe
 		List<MinorVersion> toReturn = this.getCurrentSession().createCriteria(MinorVersion.class).add(Restrictions.eq("document.id", new Long(idDoc))).list();
 		return toReturn;
 	}
-
+/*
 	@Override
 	public MinorVersion getLatestMinorVersionFromMavId(long mavId) {
 		Criteria myCrit = this.getCurrentSession().createCriteria(MinorVersion.class);
@@ -101,7 +100,7 @@ public class MinorVersionDaoImpl extends AbstractHibernateDao implements MinorVe
 		return toReturn.get(0);
 	}
 
-
+*/
 	
 	//TODO not finished, JPA rewrite to get rid of warning
 	public MinorVersion getLatestMinorVersionFromCuidJPA(String cuid) {
@@ -123,7 +122,7 @@ public class MinorVersionDaoImpl extends AbstractHibernateDao implements MinorVe
 	public MinorVersion getLatestMinorVersionFromCuid(String cuid) {
 		Criteria myCrit = this.getCurrentSession().createCriteria(MinorVersion.class);
 		myCrit.add(Restrictions.eq("latestVersion", true));
-		myCrit=myCrit.createCriteria("majorVersion");
+		//myCrit=myCrit.createCriteria("majorVersion");
 		myCrit=myCrit.createCriteria("document");
 		myCrit.add(Restrictions.eq("cuid", cuid));
 		List<MinorVersion> toReturn = myCrit.list();

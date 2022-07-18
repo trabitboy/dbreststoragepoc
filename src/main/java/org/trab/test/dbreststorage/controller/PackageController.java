@@ -53,8 +53,8 @@ public class PackageController {
 		    Long myPkgId=tp.pkgId;
 		    System.out.println(myPkgId);
 //		    jpkg.put("pkgid",myPkgId) ;
-		    long mavId = tp.mavId;
-		    jpkg.put("mavid", mavId);
+		    //long mavId = tp.mavId;
+		    //jpkg.put("mavid", mavId);
 		    long lastMivId=tp.latestMivId;
 //		    System.out.println("last miv id "+lastMivId);
 			jpkg.put("lastmivid", lastMivId);
@@ -145,8 +145,8 @@ public class PackageController {
 		    Long myPkgId=tp.pkgId;
 		    System.out.println(myPkgId);
 		    jpkg.put("pkgid",myPkgId) ;
-		    long mavId = tp.mavId;
-		    jpkg.put("mavid", mavId);
+		    //long mavId = tp.mavId;
+		    //jpkg.put("mavid", mavId);
 		    long lastMivId=tp.latestMivId;
 		    System.out.println("last miv id "+lastMivId);
 			jpkg.put("lastmivid", lastMivId);
