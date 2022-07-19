@@ -129,6 +129,16 @@ public class MinorVersionDaoImpl extends AbstractHibernateDao implements MinorVe
 		return toReturn.get(0);
 	}
 
+	//TODO not tested , suggestion for now
+	public MinorVersion getOldestMinorVersionFromCuid(String cuid) {
+		Criteria myCrit = this.getCurrentSession().createCriteria(MinorVersion.class);
+		myCrit.add(Restrictions.eq("oldestVersion", true));
+		//myCrit=myCrit.createCriteria("majorVersion");
+		myCrit=myCrit.createCriteria("document");
+		myCrit.add(Restrictions.eq("cuid", cuid));
+		List<MinorVersion> toReturn = myCrit.list();
+		return toReturn.get(0);
+	}
 
 	//TODO for some reason works with number id or no where (both controller and test)
 	// but embedding string cuid in where does not work

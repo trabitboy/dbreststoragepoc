@@ -1,0 +1,57 @@
+
+target metrics for tests is:
+200 proposals with 12000 versions
+500 users 
+500 ms response time for saving a paragraph
+
+CURRENT STATUS:
+
+on GSC server + oracle
+	50 packages of 12000 versions created 
+	jmeter test 100 users that work on 20 packages
+		save minor version
+			gets previous minor metadata
+			updates it
+			create new minor + provided xml
+		result : avg requestime is 71 ms
+		
+NEXT STEPS 
+	2 ec servers to run test > ACTION
+	 	server to run headless jmeter
+	 	server to run the poc to confirm metrics
+
+implement more operations > ACTION
+	get minor version, metadata + xm.	 	
+	get last 100 versions
+	
+
+jmeter now	
+	50 users (5 by packages)
+	save new minor version with content
+	
+jmeter extended > ACTION
+	run it for 100 , then 500 users 
+	get document, xml and metadata
+	save new minor version
+	get last 100 version
+	get oldest version (xml)
+	
+	>generate excel 
+	
+evaluate result ( is it fast enough)
+look at generated sql to see if queries are optimizable
+evaluate non optimal queries, look for possible indexes 
+do the same in jdbc  to evaluate performance increase (may be just some calls and see if performance increase)
+	
+if performance is not good enough (good confidence that it won't be needed)
+> is most of the time taken by oracle ? 
+	find mitigation with dbas
+> is the capacity problem on spring boot ?
+> does it change if I only do half the request ?
+	if so, we can have 2 spring boots and a vip infront (which redirects)
+	 
+
+
+	
+
+	
