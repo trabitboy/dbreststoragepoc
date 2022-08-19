@@ -171,6 +171,7 @@ public class DocServiceImpl implements DocService {
 		XmlContent xc = new XmlContent();
 		xc.setXml(xml);
 		nlv.getXmls().add(xc);
+		xc.setMinorVersion(nlv);
 		minorVersionDao.save(nlv);
 		
 		entityManager.flush();
@@ -187,11 +188,11 @@ public class DocServiceImpl implements DocService {
 			q.setParameter(1, docid);
 			q.setParameter(2, nlv.getId());			
 			int count=q.executeUpdate();
-			System.out.println(count +" updated miv from jpql");
+			System.out.println(count +" updated miv link from jpql");
 //			entityManager.executeU("update minor_version set major_version_id="+mavid+",document_id="+docid+" WHERE id="+nlv.getId()).executeUpdate();
 		}else {
 			entityManager.createNativeQuery("update minor_version set document_id="+docid+" WHERE id="+nlv.getId()).executeUpdate();
-			
+			System.out.println("link done with direct sql");
 		}
 		
 		//wait 10 seconds for concurrency test

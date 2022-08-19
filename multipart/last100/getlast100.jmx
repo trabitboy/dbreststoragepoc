@@ -47,7 +47,7 @@
             <collectionProp name="Arguments.arguments">
               <elementProp name="" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                <stringProp name="Argument.value">{&quot;cuid&quot;:&quot;select_cuid3&quot;}</stringProp>
+                <stringProp name="Argument.value">{&quot;cuid&quot;:&quot;hol_cuid1&quot;}</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
             </collectionProp>

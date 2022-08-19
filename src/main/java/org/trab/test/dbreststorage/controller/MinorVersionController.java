@@ -100,23 +100,24 @@ public class MinorVersionController {
 
 	}
 
-	/*
-	@PostMapping(value = { "/minorversion/createFromXml" }, produces = "application/json")
+	
+	@PostMapping(value = { "/minorversion/createFromJson" }, produces = "application/json")
 	public ResponseEntity<String> userEdits(@RequestBody String json) {
 
 		try {
 			JsonNode actualObj = mapper.readTree(json);
-			Long mavid = actualObj.get("mavid").asLong();
+			System.out.println("json "+json);
+//			Long mavid = actualObj.get("mavid").asLong();
 			String xml = actualObj.get("xml").asText();
-//			System.out.println(xml);
+			System.out.println(xml);
 //			long id = docService.saveMinorVersionFromMavId(mavid, xml);
-			String ret = Long.toString(id);
-			return new ResponseEntity<>(ret, HttpStatus.OK);
+//			String ret = Long.toString(id);
+			return new ResponseEntity<>("test ok", HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<>("post NOT ok", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	*/
+	
 
 }

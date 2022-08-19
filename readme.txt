@@ -1,3 +1,7 @@
+
+
+
+
 hibernate + rest to save and retrieve xml document versions
 
 DONE
@@ -35,27 +39,31 @@ DONE
 -- use @version for optimistic locking, on document, or similar approach by selecting before transaction end and throwing runtime business exception
 -- optimistic locking using minor version (update of the latest version flag on previous latest version)
 -- test by putting 10 sec wait sate in method and doing and update of version number in sql client
+-- flatten model> merge minor version and major version
 >optimistic locking implemented, very rapid operations on same document now error on h2
+-- suppress major version from model
+-- linking minvor version to document
+-- jmeter with get 100 minor versions
+-- testing on many packages   
 
 WIP
 
--- flatten model> merge minor version and major version
--- linking minvor version to document
--- jdbc template example to get latest 100 minor versions
--- jmeter with get minor version
--- suppress major version from model
+-- jdbc template example to get latest 100 minor versions > buggy
+-- edit xml / manual edit for json payload to do a 200 packages 1000 users test scenario
+
+
+
+
+
+TODO 
+
+
+IDEA BUFFER
 
 -- how to optimize result of query when searching latest version
 -- flag?
 -- highest number?
 simply keep a foreign key to the latest minor version
-
-
--- testing on many packages (waiting bigger database)  
-
--- edit xml / use code generation for json payload to do a 200 packages 1000 users test scenario
-
-TODO 
 
 -- more operations to load the save > leos does a couple extra fetches
 
