@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.trab.test.dbreststorage.dao.jdbc.MinorVersionJDTO;
+import org.trab.test.dbreststorage.entity.MinorVersion;
 import org.trab.test.dbreststorage.service.DocService;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -37,6 +38,13 @@ public class MinorVersionController {
 
 	Logger logger = LoggerFactory.getLogger(MinorVersionController.class);
 
+	
+	//get last version for cuid
+	
+	
+	//get oldest version for cuid
+	
+	
 	// alternate to json embed the xml
 	// just because jmeter and eclise text editors dont like 110k on one line
 	@PostMapping(path = "/minorversion/jdlast100/", produces = "application/json")
@@ -47,6 +55,7 @@ public class MinorVersionController {
 			String cuid = actualObj.get("cuid").asText();
 			// TODO for some reason works in unit test, but here returns empty list
 			List<MinorVersionJDTO> ret = docService.getLast100(cuid);
+//			List<MinorVersion> ret = docService.jpaGetLast100(cuid);
 			System.out.println(cuid + " num versions " + ret.size());
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			mapper.writeValue(baos, ret);
