@@ -34,8 +34,8 @@ class DbreststorageApplicationTests {
 
 	@Test
 	void jdversions() {
-		Long id =docService.createPackage("<xml>dummy</xml>",1, "jdtest").pkgId;
-		List<MinorVersionJDTO>ret=docService.getLast100("jdtest");
+		Long id =docService.createPackage("<xml>dummy</xml>",1, "jdtest", "jdtest").pkgId;
+		List<MinorVersionJDTO>ret=docService.getLast100("jdtest",(long) 1,"ASC");
 		for(MinorVersionJDTO d:ret) {
 			System.out.println(d.name);
 		}
@@ -45,7 +45,7 @@ class DbreststorageApplicationTests {
 	@Test
 	void testJpaVersions() {
 		
-		TestPkg tp = docService.createPackage("<xml></xml>", 1, "jpaversions");
+		TestPkg tp = docService.createPackage("<xml></xml>", 1, "jpaversions", "test");
 //		System.out.println();
 		//Long mivId=docService.saveMinorVersionFromMavId(tp.mavId,"latest");
 //		MinorVersion toTest = docService.getMinorVersionWithMajor(mivId);
@@ -72,7 +72,7 @@ class DbreststorageApplicationTests {
 	@Test
 	void testCreateTestPackage() {
 		
-		Long id =docService.createPackage("<xml>dummy</xml>",1, null).pkgId;
+		Long id =docService.createPackage("<xml>dummy</xml>",1, null,"test").pkgId;
 		System.out.println("package created " +id);
 		//let's check everything is persisted
 		DocPackage fresh =docService.testGetAllPackageInitialized(id);
@@ -92,7 +92,7 @@ class DbreststorageApplicationTests {
 	@Test
 	void testCreateTestPackage100miv() {
 		
-		Long id =docService.createPackage("<xml>dummy</xml>",100, null).pkgId;
+		Long id =docService.createPackage("<xml>dummy</xml>",100, null, "test").pkgId;
 		System.out.println("package created " +id);
 		//let's check everything is persisted
 		DocPackage fresh =docService.testGetAllPackageInitialized(id);
@@ -131,7 +131,7 @@ class DbreststorageApplicationTests {
 	@Test
 	void testSaveLatestMinorVersionFromCuid() {
 		
-		TestPkg tp = docService.createPackage("<xml></xml>", 1, "smv");
+		TestPkg tp = docService.createPackage("<xml></xml>", 1, "smv", "test");
 //		System.out.println();
 		Long mivId=docService.saveMinorVersionFromCuid("smv", "bla",false,false);
 		DocPackage pkg = docService.testGetAllPackageInitialized(tp.pkgId);
@@ -143,7 +143,7 @@ class DbreststorageApplicationTests {
 	@Test
 	void testSaveLatestMinorVersionFromCuidJpqlUpdateLink() {
 		
-		TestPkg tp = docService.createPackage("<xml></xml>", 1, "jpqlsmv");
+		TestPkg tp = docService.createPackage("<xml></xml>", 1, "jpqlsmv", "test");
 //		System.out.println();
 		Long mivId=docService.saveMinorVersionFromCuid("jpqlsmv", "bla",false,true);
 		DocPackage pkg = docService.testGetAllPackageInitialized(tp.pkgId);

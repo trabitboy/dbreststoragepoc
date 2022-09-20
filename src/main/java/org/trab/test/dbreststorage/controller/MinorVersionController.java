@@ -38,23 +38,18 @@ public class MinorVersionController {
 
 	Logger logger = LoggerFactory.getLogger(MinorVersionController.class);
 
-	
-	//get last version for cuid
-	
-	
-	//get oldest version for cuid
-	
-	
 	// alternate to json embed the xml
 	// just because jmeter and eclise text editors dont like 110k on one line
-	@PostMapping(path = "/minorversion/jdlast100/", produces = "application/json")
+	@PostMapping(path = "/minorversion/query/", produces = "application/json")
 	public ResponseEntity<String> last100(@RequestBody String json) {
 		try {
 			JsonNode actualObj = mapper.readTree(json);
 
 			String cuid = actualObj.get("cuid").asText();
+			Long limit = actualObj.get("limit").asLong();	
+			String orderBy = actualObj.get("orderby").asText();
 			// TODO for some reason works in unit test, but here returns empty list
-			List<MinorVersionJDTO> ret = docService.getLast100(cuid);
+			List<MinorVersionJDTO> ret = docService.getLast100(cuid, limit, orderBy);
 //			List<MinorVersion> ret = docService.jpaGetLast100(cuid);
 			System.out.println(cuid + " num versions " + ret.size());
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -85,7 +80,8 @@ public class MinorVersionController {
 			JsonNode actualObj = mapper.readTree(json);
 			String cuid = actualObj.get("cuid").asText();
 			String xml = new String(file.getBytes());
-			boolean wait = actualObj.get("wait").asBoolean();
+//			boolean wait = actualObj.get("wait").asBoolean();
+			boolean wait = false;			
 //			System.out.println(xml);
 			long id = docService.saveMinorVersionFromCuid(cuid, xml, wait, false);
 			String ret = Long.toString(id);

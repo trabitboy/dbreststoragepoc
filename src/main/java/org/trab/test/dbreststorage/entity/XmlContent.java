@@ -35,6 +35,10 @@ public class XmlContent {
 	@Column(name="XML")
 	String xml;
 	
+	/*
+	@Column(name = "CREATED_DATE")
+	private java.sql.Timestamp CREATED_DATE;
+	*/
 	
 	public String getXml() {
 		return xml;
@@ -73,8 +77,6 @@ public class XmlContent {
 	public void setId(long id) {
 		this.id = id;
 	}
-
-	
 
 
 	@Override

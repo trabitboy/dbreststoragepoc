@@ -31,9 +31,9 @@ public interface DocService {
 	/*
 	 * creates test package with a document with a N version with xml provided
 	 */
-	public TestPkg createPackage(String xml,long minVerNum, String cuid);
+	public TestPkg createPackage(String xml,long minVerNum, String cuid, String cuid_batch);
 	
-	public List<MinorVersionJDTO> getLast100(String cuid);
+	public List<MinorVersionJDTO> getLast100(String cuid, Long limit, String orderBy);
 	
 	public List<MinorVersion> jpaGetLast100(String cuid);
 	

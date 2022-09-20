@@ -46,7 +46,7 @@ public class PackageController {
 			Long numVersions=actualObj.get("numVersions").asLong();
 			String cuid=actualObj.get("cuid").asText();
 			//test reload
-			TestPkg tp = docService.createPackage(xml,numVersions,cuid);
+			TestPkg tp = docService.createPackage(xml,numVersions,cuid,cuid);
 
 		    // create a JSON object
 		    ObjectNode jpkg = mapper.createObjectNode();
@@ -96,7 +96,7 @@ public class PackageController {
 			
 			for(int i=1;i<=numPackages;i++) {
 				long index= i+startNumPackage-1;
-				TestPkg tp = docService.createPackage(xml,numVersions,cuid+index);
+				TestPkg tp = docService.createPackage(xml,numVersions,cuid+"_"+i,cuid);
 				created.add(tp);
 			}
 
@@ -136,9 +136,10 @@ public class PackageController {
 			JsonNode actualObj = mapper.readTree(json);
 //			String name = actualObj.get("name").asText();
 			String xml=actualObj.get("xml").asText();
+			String cuid_batch = null;
 			Long numVersions=actualObj.get("numVersions").asLong();
 		
-			TestPkg tp = docService.createPackage(xml,numVersions,"default cuid"+System.currentTimeMillis());
+			TestPkg tp = docService.createPackage(xml,numVersions,"default cuid"+System.currentTimeMillis(),cuid_batch);
 
 		    // create a JSON object
 		    ObjectNode jpkg = mapper.createObjectNode();

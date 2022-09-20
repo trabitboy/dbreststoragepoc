@@ -50,7 +50,7 @@ public class DocServiceImpl implements DocService {
 
 	//atomic
 	@Transactional(propagation =  Propagation.REQUIRES_NEW)
-	public TestPkg createPackage(String xml,long minVerNum,String cuid) {
+	public TestPkg createPackage(String xml,long minVerNum,String cuid, String cuid_batch) {
 
 		//XmlContent xc=new XmlContent();
 //		xc.setXml(xml);
@@ -69,16 +69,20 @@ public class DocServiceImpl implements DocService {
 */
 
 		Document doc=new Document();
-		doc.setName("test");
+		doc.setName(cuid_batch);
 		doc.setCuid(cuid);
-//		doc.get().add(mav);
+		DocPackage pkg=new DocPackage();
+		pkg.setName(cuid_batch);	
+		
+		//		doc.get().add(mav);
 		//mav.setDocument(doc);
 
 		for (int i=1;i<=minVerNum;i++) {
 			XmlContent xcmiv=new XmlContent();
 			xcmiv.setXml(xml);
 			MinorVersion miv1 =new MinorVersion();
-			miv1.setName("test"+i);
+			miv1.setVersion(i);
+			miv1.setName("test"+i);			
 			miv1.getXmls().add(xcmiv);
 			xcmiv.setMinorVersion(miv1);
 //			mav.getMinorVersions().add(miv);
@@ -94,8 +98,7 @@ public class DocServiceImpl implements DocService {
 		
 		
 		
-		DocPackage pkg=new DocPackage();
-		pkg.setName("test");	
+
 		pkg.getDocuments().add(doc);
 		doc.setDocPackage(pkg);
 		
@@ -184,7 +187,7 @@ public class DocServiceImpl implements DocService {
 		//TODO jpql would make it portable
 
 		if (jpql) {
-			Query q=entityManager.createQuery("UPDATE MinorVersion miv SET miv.document.id=?1 where miv.id=?2");
+			Query q=entityManager.createQuery("UPDATE MinorVersion miv SET miv.document_id=?1 where miv.id=?2");
 			q.setParameter(1, docid);
 			q.setParameter(2, nlv.getId());			
 			int count=q.executeUpdate();
@@ -210,8 +213,8 @@ public class DocServiceImpl implements DocService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<MinorVersionJDTO> getLast100(String cuid) {
-		return minorVersionDao.jdGetLast100Versiont(cuid);
+	public List<MinorVersionJDTO> getLast100(String cuid, Long limit, String orderBy) {
+		return minorVersionDao.jdGetLast100Versiont(cuid, limit, orderBy);
 	}
 
 	@Transactional(readOnly = true)
@@ -219,7 +222,7 @@ public class DocServiceImpl implements DocService {
 		return minorVersionDao.jpaGetLast100Version(cuid);
 	}
 	
-	//TODO alternate method with manual optimistic lock implementation ^^ (for fun and profit) with sub method
+	//TO-DO alternate method with manual optimistic lock implementation ^^ (for fun and profit) with sub method
 	// that polls outside transaction context using propagation 'requires new'
 
 	

@@ -13,8 +13,6 @@ public interface MinorVersionDao {
 	Long save(MinorVersion miv);
 	
 	Long saveMinorVersionWithXml(String name,String xml);
-
-//	MinorVersion getLatestMinorVersionFromMavId(long mavId);
 	
 	List<MinorVersion> list();
 
@@ -24,7 +22,7 @@ public interface MinorVersionDao {
 
 	MinorVersion getLatestMinorVersionFromCuid(String cuid);
 	
-	List<MinorVersionJDTO> jdGetLast100Versiont(String cuid);
+	List<MinorVersionJDTO> jdGetLast100Versiont(String cuid, Long limit, String orderBy);
 
 	List<MinorVersion> jpaGetLast100Version(String cuid);
 

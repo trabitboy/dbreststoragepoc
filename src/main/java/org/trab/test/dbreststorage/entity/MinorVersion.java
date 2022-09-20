@@ -37,6 +37,7 @@ public class MinorVersion {
 	long id;
 
 	@Version 
+	@Column(name = "VERSION")
 	long version;
 	
 	@ManyToOne
@@ -88,6 +89,8 @@ public class MinorVersion {
 
 	@Column(name = "MNOLDEST")
 	Boolean oldestVersion;
+	
+
 	
 	public MinorVersion() {
 		this.latestVersion=false;
@@ -144,9 +147,6 @@ public class MinorVersion {
 //	MajorVersion latestForMajorVersion;
 	
 
-	
-	
-	
 	@Override
 	public String toString() {
 		StringBuilder sBuilder = new StringBuilder();
