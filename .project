@@ -20,11 +20,4 @@
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.m2e.core.maven2Nature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>multipart/jmeter/Oracle.jmx</name>
-			<type>1</type>
-			<location>C:/Users/Administrator/Downloads/apache-jmeter-5.5/bin/Oracle.jmx</location>
-		</link>
-	</linkedResources>
 </projectDescription>
