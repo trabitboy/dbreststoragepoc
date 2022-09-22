@@ -2,6 +2,8 @@ package org.trab.test.dbreststorage.dao.impl;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.LockModeType;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -20,7 +22,11 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.trab.test.dbreststorage.dao.MinorVersionDao;
 import org.trab.test.dbreststorage.dao.jdbc.JMinorVersionDTOMapper;
+import org.trab.test.dbreststorage.dao.jdbc.MetadataXmlRow;
+import org.trab.test.dbreststorage.dao.jdbc.MetadataXmlRowMapper;
 import org.trab.test.dbreststorage.dao.jdbc.MinorVersionJDTO;
+import org.trab.test.dbreststorage.dao.jdbc.MinorVersionJDTORow;
+import org.trab.test.dbreststorage.dao.jdbc.MinorVersionJDTORowMapper;
 import org.trab.test.dbreststorage.entity.MinorVersion;
 import org.trab.test.dbreststorage.entity.XmlContent;
 import org.trab.test.dbreststorage.util.AbstractHibernateDao;
@@ -30,7 +36,7 @@ public class MinorVersionDaoImpl extends AbstractHibernateDao implements MinorVe
 
 	@Autowired
 	JdbcTemplate jdbcTemplate;
-	
+	 private EntityManagerFactory emf;
 	
 	
 	public MinorVersion find(long id) {
@@ -116,17 +122,26 @@ public class MinorVersionDaoImpl extends AbstractHibernateDao implements MinorVe
 //		
 		List<MinorVersion> toReturn = entityManager.createQuery(myCrit).getResultList();
 		return toReturn.get(0);
+	
+	}	
+	
+	@Override
+	public MinorVersion  getLatestMinorVersionFromCuid(String cuid) {
+		Criteria myCrit = this.getCurrentSession().createCriteria(MinorVersion.class);
+		myCrit.add(Restrictions.eq("latestVersion", true));
+		myCrit=myCrit.createCriteria("document");
+		myCrit.add(Restrictions.eq("cuid", cuid));
+		List list = myCrit.list();
+		List<MinorVersion> toReturn = list;
+		return toReturn.get(0);
 	}	
 
 	@Override
-	public MinorVersion getLatestMinorVersionFromCuid(String cuid) {
-		Criteria myCrit = this.getCurrentSession().createCriteria(MinorVersion.class);
-		myCrit.add(Restrictions.eq("latestVersion", true));
-		//myCrit=myCrit.createCriteria("majorVersion");
-		myCrit=myCrit.createCriteria("document");
-		myCrit.add(Restrictions.eq("cuid", cuid));
-		List<MinorVersion> toReturn = myCrit.list();
-		return toReturn.get(0);
+	public List<MinorVersionJDTORow>  getLatestMinorVersionFromCuidJpa(String cuid) {
+		String sqlString = "SELECT ID, MNLATEST ,MNNUMBER , name, MNOLDEST , version, DOCUMENT_ID FROM MINOR_VERSION \r\n"
+				+ "WHERE MNLATEST  = 1 AND DOCUMENT_ID IN (SELECT id FROM DOCUMENT WHERE cuid = '" + cuid + "' )";
+		
+		return jdbcTemplate.query(sqlString,new MinorVersionJDTORowMapper());
 	}
 
 	//TODO not tested , suggestion for now
@@ -153,6 +168,19 @@ public class MinorVersionDaoImpl extends AbstractHibernateDao implements MinorVe
 		return jdbcTemplate.query(realSql ,new JMinorVersionDTOMapper());
 	}
 
+	@Override
+	public List<MetadataXmlRow> jdGetFirstLast(String cuid, String position) {
+		
+		String realSql="SELECT d.name,xml\r\n"
+				+ "FROM document doc, MINOR_VERSION mv, xml_content xml, DOCPACKAGE d\r\n"
+				+ "WHERE doc.id = mv.DOCUMENT_ID \r\n"
+				+ "AND mv.ID  = xml.MINOR_VERSION_ID \r\n"
+				+ "AND doc.CUID = '" + cuid + "'\r\n"
+				+ "AND doc.PACKAGE_ID = d.ID \r\n"
+				+ "AND (mnlatest = decode('" + position + "','last',1) or mnoldest = decode('" + position + "','first',1))"; 
+		
+		return jdbcTemplate.query(realSql ,new MetadataXmlRowMapper());
+	}
 
 	@Override
 	public List<MinorVersion> jpaGetLast100Version(String cuid) {

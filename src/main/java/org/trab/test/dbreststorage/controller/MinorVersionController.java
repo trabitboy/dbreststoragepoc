@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.trab.test.dbreststorage.dao.jdbc.MetadataXmlRow;
 import org.trab.test.dbreststorage.dao.jdbc.MinorVersionJDTO;
 import org.trab.test.dbreststorage.entity.MinorVersion;
 import org.trab.test.dbreststorage.service.DocService;
@@ -69,6 +70,29 @@ public class MinorVersionController {
 		}
 
 	}
+	
+	@PostMapping(path = "/minorversion/getfirstlast/", produces = "application/json")
+	public ResponseEntity<String> getFirstLast(@RequestBody String json) {
+		try {
+			JsonNode actualObj = mapper.readTree(json);
+			String cuid = actualObj.get("cuid").asText();
+			String position = actualObj.get("position").asText();
+			List<MetadataXmlRow> ret = docService.getFirstLast(cuid,position);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			mapper.writeValue(baos, ret);
+			byte[] bs = baos.toByteArray();
+			return new ResponseEntity<>(new String(bs), HttpStatus.OK);
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+			return new ResponseEntity<>("post NOT ok", HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return new ResponseEntity<>("post NOT ok", HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return new ResponseEntity<>("post NOT ok", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}	
 
 	// alternate to json embed the xml
 	// just because jmeter and eclise text editors dont like 110k on one line
@@ -83,7 +107,7 @@ public class MinorVersionController {
 //			boolean wait = actualObj.get("wait").asBoolean();
 			boolean wait = false;			
 //			System.out.println(xml);
-			long id = docService.saveMinorVersionFromCuid(cuid, xml, wait, false);
+			long id = docService.saveMinorVersionFromCuid(cuid, xml, wait, true);
 			String ret = Long.toString(id);
 			return new ResponseEntity<>("save success " + ret, HttpStatus.OK);
 		} catch (StaleStateException e) {

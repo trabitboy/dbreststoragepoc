@@ -2,7 +2,6 @@ package org.trab.test.dbreststorage.dao.jdbc;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 import org.springframework.jdbc.core.RowMapper;
 
 public class JMinorVersionDTOMapper  implements RowMapper<MinorVersionJDTO> {

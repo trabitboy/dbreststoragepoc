@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.trab.test.dbreststorage.dao.DocPackageDao;
 import org.trab.test.dbreststorage.dao.DocumentDao;
 import org.trab.test.dbreststorage.dao.MinorVersionDao;
+import org.trab.test.dbreststorage.dao.jdbc.MetadataXmlRow;
 import org.trab.test.dbreststorage.dao.jdbc.MinorVersionJDTO;
 import org.trab.test.dbreststorage.entity.DocPackage;
 import org.trab.test.dbreststorage.entity.Document;
@@ -85,8 +86,9 @@ public class DocServiceImpl implements DocService {
 			miv1.setName("test"+i);			
 			miv1.getXmls().add(xcmiv);
 			xcmiv.setMinorVersion(miv1);
-//			mav.getMinorVersions().add(miv);
-			//miv.setMajorVersion(;
+			if (i==1) {
+				miv1.setOldestVersion(true);
+			}
 			if (i==minVerNum)
 			{
 				miv1.setLatestVersion(true);
@@ -106,7 +108,8 @@ public class DocServiceImpl implements DocService {
 		 entityManager.flush(); //sql executed, ids generated
 		 
 		 return new TestPkg(    created, 
-				 doc.getMinorVersions().get((int) (minVerNum-1)).getId()				 
+				 doc.getMinorVersions().get((int) (minVerNum-1)).getId()	,
+				 doc.getMinorVersions().get((int) (1)).getId()	
 				 //miv.getMinorVersionNumber().get((int) (minVerNum-1)).getId()
 				 );
 	}
@@ -160,6 +163,8 @@ public class DocServiceImpl implements DocService {
 */
 	@Transactional
 	public Long saveMinorVersionFromCuid(String cuid, String xml,boolean testExtraWait,boolean jpql) {
+		
+		System.out.println("cuid "+cuid);
 		MinorVersion prevLatest = minorVersionDao.getLatestMinorVersionFromCuid(cuid);
 		entityManager.lock(prevLatest, LockModeType.OPTIMISTIC);
 		//with the above line, hibernate executes an extra:
@@ -187,9 +192,11 @@ public class DocServiceImpl implements DocService {
 		//TODO jpql would make it portable
 
 		if (jpql) {
-			Query q=entityManager.createQuery("UPDATE MinorVersion miv SET miv.document_id=?1 where miv.id=?2");
+			Query q=entityManager.createQuery("UPDATE MinorVersion miv SET miv.document=?1 where miv.id=?2");
 			q.setParameter(1, docid);
+			System.out.println("docid "+docid);
 			q.setParameter(2, nlv.getId());			
+			System.out.println("nlv.getId() "+nlv.getId());
 			int count=q.executeUpdate();
 			System.out.println(count +" updated miv link from jpql");
 //			entityManager.executeU("update minor_version set major_version_id="+mavid+",document_id="+docid+" WHERE id="+nlv.getId()).executeUpdate();
@@ -217,6 +224,11 @@ public class DocServiceImpl implements DocService {
 		return minorVersionDao.jdGetLast100Versiont(cuid, limit, orderBy);
 	}
 
+	@Transactional(readOnly = true)
+	public List<MetadataXmlRow> getFirstLast(String cuid, String position) {
+		return minorVersionDao.jdGetFirstLast(cuid, position);
+	}
+	
 	@Transactional(readOnly = true)
 	public List<MinorVersion> jpaGetLast100(String cuid) {
 		return minorVersionDao.jpaGetLast100Version(cuid);

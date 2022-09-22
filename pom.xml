@@ -8,8 +8,8 @@
 		<version>2.7.1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>org.trab.test</groupId>
-	<artifactId>dbreststorage</artifactId>
+	<groupId>org.leos.oracle</groupId>
+	<artifactId>java2oracle</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>dbreststorage</name>
 	<description>Demo project for Spring Boot</description>

@@ -3,6 +3,7 @@ package org.trab.test.dbreststorage.service;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.trab.test.dbreststorage.dao.jdbc.MetadataXmlRow;
 import org.trab.test.dbreststorage.dao.jdbc.MinorVersionJDTO;
 import org.trab.test.dbreststorage.entity.DocPackage;
 import org.trab.test.dbreststorage.entity.MinorVersion;
@@ -34,6 +35,7 @@ public interface DocService {
 	public TestPkg createPackage(String xml,long minVerNum, String cuid, String cuid_batch);
 	
 	public List<MinorVersionJDTO> getLast100(String cuid, Long limit, String orderBy);
+	public List<MetadataXmlRow> getFirstLast(String cuid, String position);	
 	
 	public List<MinorVersion> jpaGetLast100(String cuid);
 	
