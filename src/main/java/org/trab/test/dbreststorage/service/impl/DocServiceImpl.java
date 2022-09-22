@@ -197,11 +197,9 @@ public class DocServiceImpl implements DocService {
 			
 
 		if (jpql) {
-			Query q=entityManager.createQuery("UPDATE MinorVersion miv SET miv.document=?1, miv.version=?2 where miv.id=?2");
+			Query q=entityManager.createQuery("UPDATE MinorVersion miv SET miv.document.id=?1 where miv.id=?2");
 			q.setParameter(1, docid);
-			q.setParameter(2, version);
-			q.setParameter(3, nlv.getId());
-			//q.setParameter(2, nlv.getId());				
+			q.setParameter(2, nlv.getId());				
 			int count=q.executeUpdate();
 			System.out.println(count +" updated miv link from jpql");
 		}else {
