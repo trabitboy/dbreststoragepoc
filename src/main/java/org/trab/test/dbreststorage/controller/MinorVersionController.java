@@ -107,7 +107,7 @@ public class MinorVersionController {
 //			boolean wait = actualObj.get("wait").asBoolean();
 			boolean wait = false;			
 //			System.out.println(xml);
-			long id = docService.saveMinorVersionFromCuid(cuid, xml, wait, true);
+			long id = docService.saveMinorVersionFromCuid(cuid, xml, wait, false);
 			String ret = Long.toString(id);
 			return new ResponseEntity<>("save success " + ret, HttpStatus.OK);
 		} catch (StaleStateException e) {

@@ -166,6 +166,7 @@ public class DocServiceImpl implements DocService {
 		
 		System.out.println("cuid "+cuid);
 		MinorVersion prevLatest = minorVersionDao.getLatestMinorVersionFromCuid(cuid);
+		long version = prevLatest.getVersion()+1;
 		entityManager.lock(prevLatest, LockModeType.OPTIMISTIC);
 		//with the above line, hibernate executes an extra:
 		//org.hibernate.SQL                        : select version as version_ from minor_version where id =?
@@ -189,22 +190,25 @@ public class DocServiceImpl implements DocService {
 		//TODO check overhead of get id ( do we get all maj version// colls?
 		long mavid = prevLatest.getId();
 		long docid = prevLatest.getDocument().getId();
+
 		//TODO jpql would make it portable
+		System.out.println("docid "+docid);
+		System.out.println("nlv.getId() "+ nlv.getId());		
+			
 
 		if (jpql) {
-			Query q=entityManager.createQuery("UPDATE MinorVersion miv SET miv.document=?1 where miv.id=?2");
+			Query q=entityManager.createQuery("UPDATE MinorVersion miv SET miv.document=?1, miv.version=?2 where miv.id=?2");
 			q.setParameter(1, docid);
-			System.out.println("docid "+docid);
-			q.setParameter(2, nlv.getId());			
-			System.out.println("nlv.getId() "+nlv.getId());
+			q.setParameter(2, version);
+			q.setParameter(3, nlv.getId());
+			//q.setParameter(2, nlv.getId());				
 			int count=q.executeUpdate();
 			System.out.println(count +" updated miv link from jpql");
-//			entityManager.executeU("update minor_version set major_version_id="+mavid+",document_id="+docid+" WHERE id="+nlv.getId()).executeUpdate();
 		}else {
 			entityManager.createNativeQuery("update minor_version set document_id="+docid+" WHERE id="+nlv.getId()).executeUpdate();
 			System.out.println("link done with direct sql");
 		}
-		
+
 		//wait 10 seconds for concurrency test
 		if (testExtraWait) {
 			try {
