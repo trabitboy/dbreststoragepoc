@@ -59,8 +59,6 @@ public class PackageController {
 //		    System.out.println("last miv id "+lastMivId);
 			jpkg.put("lastmivid", lastMivId);
 			
-		    long oldestMivId=tp.oldestMivId;
-			jpkg.put("firstmivid", oldestMivId);
 		    // convert `ObjectNode` to pretty-print JSON
 		    // without pretty-print, use `user.toString()` method
 		    String ret = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jpkg);

@@ -108,8 +108,7 @@ public class DocServiceImpl implements DocService {
 		 entityManager.flush(); //sql executed, ids generated
 		 
 		 return new TestPkg(    created, 
-				 doc.getMinorVersions().get((int) (minVerNum-1)).getId()	,
-				 doc.getMinorVersions().get((int) (1)).getId()	
+				 doc.getMinorVersions().get((int) (minVerNum-1)).getId()
 				 //miv.getMinorVersionNumber().get((int) (minVerNum-1)).getId()
 				 );
 	}
